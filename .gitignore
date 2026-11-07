@@ -1,1 +1,7 @@
 .troy-mode/progress.md
+reports/
+.coverage
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
