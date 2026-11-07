@@ -8,10 +8,14 @@ commit = "fe95ac37e7d41fe16fc4efa1efa502f578e64dd3"
 
 [steps]
 setup = "2026-11-07"
+lang = "2026-11-07"
+
+[lang]
+name = "python"
 
 [files]
 ".github/pull_request_template.md" = "ae3ebd51a5cbd436b66944d531c15f8fb390f2de8d45ac56f293d881e274a7a0"
-".github/workflows/troy-mode.yml" = "9d8fefdb4738d599681ec74700d0fb7188ca7c1ae08fc43ae5e43a972f41d414"
+".github/workflows/troy-mode.yml" = "becc03af526dbbd23b045a1bd9fe56d0788e42c5623ee3d0e658d1c4b12dda78"
 ".troy-mode/checks/.gitignore" = "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
 ".troy-mode/checks/git-hooks/commit-msg" = "6a1b4bf551679b968955b03e224d332b20ec2baf0084e0dba80089cef0fa5b90"
 ".troy-mode/checks/git-hooks/pre-commit" = "41afe22be776b78e86f5ffcccf8e65406f46fb9812d68ca90ecac27d7b1a01df"

@@ -67,6 +67,10 @@ legacy = []
 # include_dirs = ["include", "src"]  # C/C++: tried after the including file's folder
 # environment = "troy-agent-env"
 # series = ["."]
+name = "python"
+source_roots = ["src"]
+environment = "troy-mode-trial"
+series = ["."]
 
 [attribution]
 # R19. "strict" also blocks any word Claude or Anthropic in commit messages,
