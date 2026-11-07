@@ -1,0 +1,75 @@
+# troy-mode project config: .troy-mode/config.toml
+#
+# Every key is optional. Lists add to the built-in patterns shown in the
+# comments and never replace them. An unknown key or a wrong type stops
+# troy-check with exit code 2, so a typo never turns a rule off.
+#
+# troy-check pr reads this file from the merge-base commit, so a change here
+# takes effect on the PRs after the one that makes it.
+#
+# Patterns match the whole path from the repository root, with "/"
+# separators. "*" matches within one folder name, "**" matches any number of
+# folders, and "?" matches one character.
+
+[identity]
+# The only allowed author email (R19). troy-init fills it in.
+commit_email = "148482542+ZJUCao@users.noreply.github.com"
+
+[paths]
+# troy-init filled in the patterns of every language pack, so that a pack's
+# files already have their classes when the language step's PR is checked
+# (F06 design D49).
+#
+# Path classes, checked in this order. The first match wins, and a path that
+# matches none is source.
+#
+# config. Built in: ".troy-mode/**", ".github/**", "docs/rules.md",
+#   "docs/rules.zh-CN.md", ".gitignore", ".gitattributes", ".editorconfig"
+config = [".clang-format", ".clang-tidy", "include/troy/not_implemented.h"]
+# dependencies. Built in: none. Language packs add manifests (R16).
+dependencies = ["pyproject.toml", "environment.yml", "requirements*.lock", "CMakeLists.txt",
+                "**/CMakeLists.txt", "cmake/**", "CMakePresets.json", "requirements*.in"]
+# tests. Built in: "tests/**", "test/**". Language packs add more.
+tests = ["**/test_*.py", "**/*_test.py", "**/conftest.py", "**/*_test.cc", "**/*_test.cpp"]
+# docs. Built in: "docs/**", "**/*.md", "LICENSE*"
+docs = []
+#
+# Not counted by R03, neither lines nor files.
+lock = ["requirements*.lock"]
+generated = []
+#
+# Documents that hold {{ }} on purpose; R20 does not scan them.
+allow_markers = []
+
+[limits]
+# R03 limits for mock, impl, fix, and refactor PRs.
+source_lines = 500
+source_files = 5
+# R11, troy-check code: minimum coverage of changed lines in impl and fix
+# PRs, in percent.
+line_coverage = 90
+branch_coverage = 80
+# R04 and R06, troy-check code: code lines per function body, and lines per
+# source file.
+function_lines = 50
+file_lines = 500
+
+[tests]
+# R10. Test files whose tests may carry no case or bug ID at the start of
+# their names, for a project that adopted troy-mode with tests it already
+# had. Their tests must still pass.
+legacy = []
+
+[lang]
+# Set by the language pack (troy-mode/lang/ in troy-pstack), for example:
+# name = "python"                  # or "cpp"
+# source_roots = ["src"]           # Python: where imports are resolved from
+# include_dirs = ["include", "src"]  # C/C++: tried after the including file's folder
+# environment = "troy-agent-env"
+# series = ["."]
+
+[attribution]
+# R19. "strict" also blocks any word Claude or Anthropic in commit messages,
+# PR titles, and PR descriptions. "trailers" blocks only attribution lines,
+# for a project about Claude.
+mode = "strict"
