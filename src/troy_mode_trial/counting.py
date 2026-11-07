@@ -1,6 +1,7 @@
 """Word counting for UTF-8 text files."""
 
 import os
+from pathlib import Path
 
 
 def count_words(path: str | os.PathLike[str]) -> int:
@@ -31,4 +32,26 @@ def count_words(path: str | os.PathLike[str]) -> int:
         UnicodeDecodeError: The file content is not valid UTF-8.
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
-    raise NotImplementedError
+    text_path = _checked_path(path)
+    with Path(text_path).open(encoding="utf-8-sig") as handle:
+        return len(handle.read().split())
+
+
+def _checked_path(path: object) -> str:
+    """Return `path` as a `str`, or raise `TypeError` for any other type.
+
+    Args:
+        path: The value the caller passed as a path.
+
+    Returns:
+        The path as a `str`.
+
+    Raises:
+        TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
+    """
+    if not isinstance(path, (str, os.PathLike)):
+        raise TypeError(f"path must be str or os.PathLike, not {type(path).__name__}")
+    text_path = os.fspath(path)
+    if not isinstance(text_path, str):
+        raise TypeError("path must be str or os.PathLike[str], not bytes")
+    return text_path
