@@ -77,3 +77,6 @@ series = ["."]
 # PR titles, and PR descriptions. "trailers" blocks only attribution lines,
 # for a project about Claude.
 mode = "strict"
+
+[roles.code-reviewer]
+effort = "medium"
