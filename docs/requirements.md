@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "1.0"
+version: "1.1"
 updated: "2026-11-07"
 status: "Approved by Troy on 2026-11-07"
 mirror: "requirements.zh-CN.md"
@@ -39,7 +39,7 @@ The function names in the prototypes show the flow. The Interface Designer fixes
 
 | ID | Feature | Hard dependencies | Soft dependencies | Version | Status |
 | --- | --- | --- | --- | --- | --- |
-| F01 | Count words: count the words in one UTF-8 text file. A word is a run of characters that are not white space. | None | None | v0.1 | Not started |
+| F01 | Count words: count the words in one UTF-8 text file. A word is a run of characters that are not white space. | None | None | v0.1 | Passes tests on main |
 | F02 | Count lines: count the lines in one UTF-8 text file. A last line without a line break still counts. | None | None | v0.1 | Not started |
 
 ## 5. Dependency graph and order
@@ -96,3 +96,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-11-07 | First draft. |
+| 1.1 | 2026-11-07 | F01 accepted: its status is now Passes tests on main. |
