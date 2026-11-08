@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "2.0"
-updated: "2026-11-07"
-status: "Approved by Troy on 2026-11-07"
+version: "3.0"
+updated: "2026-11-08"
+status: "Approved by Troy on 2026-11-08"
 mirror: "requirements.zh-CN.md"
 ---
 
@@ -11,7 +11,7 @@ mirror: "requirements.zh-CN.md"
 
 ## 1. Goal
 
-troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts. Version 0.1 counts the words and the lines of one file.
+troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts. Version 0.1 counts the words of one file. Version 0.2 also counts its lines.
 
 ## 2. Users
 
@@ -41,7 +41,7 @@ The function names in the prototypes show the flow. The Interface Designer fixes
 | ID | Feature | Hard dependencies | Soft dependencies | Version | Status |
 | --- | --- | --- | --- | --- | --- |
 | F01 | Count words | None | None | v0.1 | Passes tests on main |
-| F02 | Count lines | None | None | v0.1 | Not started |
+| F02 | Count lines | None | None | v0.2 | Not started |
 | F03 | Words need a letter or digit | F01 | None | v0.1 | Not started |
 
 ### 4.1 What each feature does
@@ -66,7 +66,8 @@ Topological order: F01, F03, F02
 
 | Version | Features | What makes it usable on its own |
 | --- | --- | --- |
-| v0.1 | F01, F03, F02 | Troy's scripts can count the words and the lines of a UTF-8 text file. |
+| v0.1 | F01, F03 | Troy's scripts can count the words of a UTF-8 text file, where a word holds at least one letter or digit. |
+| v0.2 | F02 | Troy's scripts can also count the lines of a UTF-8 text file. |
 
 ## 7. Non-functional requirements
 
@@ -106,3 +107,5 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 0.1 | 2026-11-07 | First draft. |
 | 1.1 | 2026-11-07 | F01 accepted: its status is now Passes tests on main. |
 | 1.2 | 2026-11-07 | A word must hold at least one letter or digit (`str.isalnum()`). F01 is accepted, so the change is the new feature F03, with a hard dependency on F01. The Feature cells of F01 and F02 hold only their short names; section 4.1 describes each feature. |
+| 2.1 | 2026-11-08 | F02 moves to the new version v0.2, so v0.1 holds F01 and F03. The version plan adds v0.2. F02's behavior does not change, and F01 and F03 do not change. |
+| 3.0 | 2026-11-08 | Approved by Troy. |
