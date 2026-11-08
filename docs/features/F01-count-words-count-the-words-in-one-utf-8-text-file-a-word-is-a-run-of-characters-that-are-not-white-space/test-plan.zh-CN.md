@@ -1,7 +1,7 @@
 ---
 troy-doc: "F01-test-plan"
 lang: "zh-CN"
-version: "1.0"
+version: "2.0"
 updated: "2026-11-07"
 status: "Troy 已于 2026-11-07 批准"
 mirror-of: "test-plan.md"
@@ -28,9 +28,7 @@ mirror-of: "test-plan.md"
 | F01-T06 | 单元 | `count_words` | Unicode 空白分隔词（Q1）。 | `甲　乙 丙 丁 戊\u0085己` | 返回 `6`。 |
 | F01-T07 | 单元 | `count_words` | `str.isspace()` 为假的字符不分隔词，即使它看起来是空白。 | `a​b c⁠d`（零宽空格和连字符号 word joiner） | 返回 `2`。 |
 | F01-T08 | 单元 | `count_words` | `\n`、`\r\n` 和 `\r` 都是空白，得到相同的计数。 | 三个文件，词相同：`one two\nthree\nfour`、`one two\r\nthree\r\nfour` 和 `one two\rthree\rfour`。第四个文件以 `four\r\n` 结尾。 | 四个文件都返回 `4`。 |
-| F01-T09 | 单元 | `count_words` | 含非 ASCII 字符的词（在 UTF-8 中占两到四个字节）各算一次。 | `café naïve 日本語 😀 Ελληνικά` | 返回 `5`。 |
 | F01-T10 | 单元 | `count_words` | 忽略文件开头的一个字节顺序标记（Q5）。 | 四个文件：字节 `EF BB BF` 后接 `one two`；只有 `EF BB BF`；`EF BB BF` 后接 ` word`；`EF BB BF` 后接 `\n`。 | 依次返回 `2`、`0`、`1` 和 `0`。 |
-| F01-T11 | 单元 | `count_words` | 出现在第一个字符以外位置的 U+FEFF 不是空白，是词的一部分。 | 三个文件：`a ﻿ b`、`a﻿b` 和 `﻿﻿`（开头有两个标记）。 | 依次返回 `3`、`1` 和 `1`。 |
 | F01-T12 | 单元 | `count_words` | 在大文件中计数仍然正确，此时词或空白串可能跨越任何内部读取边界。 | 一个文件：200,000 个 `word ` 相连，每第 1,000 个空格换成一个换行符，其后接一个由 100,000 个 `x` 组成的词，再接 `　end`。文件大于 1 MiB。 | 返回 `200002`。 |
 | F01-T13 | 功能 | `count_words` | `path` 的每种合法形式得到相同的计数。 | 一个内容为 `one two three` 的文件。分别以 `str` 形式的绝对路径、`pathlib.Path`，以及一个实现了 `__fspath__` 并返回 `str` 的测试类对象调用。 | 每个都返回 `3`。 |
 | F01-T14 | 功能 | `count_words` | 相对路径按当前工作目录解析。 | 在 `tmp_path` 中建文件 `words.txt`，内容为 `alpha beta`。用 `monkeypatch.chdir` 把 `tmp_path` 设为工作目录，再分别以 `"words.txt"` 和 `pathlib.Path("words.txt")` 调用。 | 每个都返回 `2`。 |
@@ -53,6 +51,8 @@ mirror-of: "test-plan.md"
 | 异常消息的文字，例如设计示例中的 `[Errno 2] No such file or directory: 'missing.txt'`。 | 消息由 Python 生成，设计只承诺异常类型（Q4）。F01-T15 到 F01-T19 检查类型。 |
 | Windows 上不可读文件的 `PermissionError`。 | 在 Windows 上去掉文件的读权限需要访问控制列表，可移植的测试无法可靠地设置和恢复。F01-T17 在 Linux 上检查同一行为。 |
 | 性能。 | 没有性能指标（R14）。 |
+| F01-T09：`café naïve 日本語 😀 Ελληνικά` 中的词各算一次，预期 `5`。 | 被 F03 退役。F03 把预期结果改为 `4`，因为 `😀` 不含字母或数字。F03-T06 覆盖这个输入。 |
+| F01-T11：出现在第一个字符以外位置的 U+FEFF 是词的一部分。文件 `a <U+FEFF> b`、`a<U+FEFF>b` 和开头有两个标记的文件，依次预期 `3`、`1` 和 `1`。 | 被 F03 退役。F03 把预期结果改为 `2`、`1` 和 `0`，因为单独的 U+FEFF 不是词。F03-T09 覆盖第一个和第三个文件。第二个文件的结果仍是 `1`，F03-T09 把它和一个单独的标记合成 `a<U+FEFF>b <U+FEFF>`，使测试在当前代码上失败（R09）。 |
 
 ## 5. 与接口设计师的对齐记录
 
@@ -63,3 +63,4 @@ mirror-of: "test-plan.md"
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | 0.1 | 2026-11-07 | 初稿。 |
+| 1.1 | 2026-11-07 | 把预期结果被 F03 改变的 F01-T09 和 F01-T11 退役，移到第 4 节。 |

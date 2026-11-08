@@ -1,7 +1,7 @@
 ---
 troy-doc: "F01-test-plan"
 lang: "en"
-version: "1.0"
+version: "2.0"
 updated: "2026-11-07"
 status: "Approved by Troy on 2026-11-07"
 mirror: "test-plan.zh-CN.md"
@@ -28,9 +28,7 @@ Every case reaches the function the way a caller does: `from troy_mode_trial imp
 | F01-T06 | unit | `count_words` | Unicode white space separates words (Q1). | `甲　乙 丙 丁 戊\u0085己` | Returns `6`. |
 | F01-T07 | unit | `count_words` | A character for which `str.isspace()` is false does not separate words, even when it looks blank. | `a​b c⁠d` (zero width space and word joiner) | Returns `2`. |
 | F01-T08 | unit | `count_words` | `\n`, `\r\n`, and `\r` are white space and give the same count. | Three files with the same words: `one two\nthree\nfour`, `one two\r\nthree\r\nfour`, and `one two\rthree\rfour`. A fourth file ends `four\r\n`. | Returns `4` for each of the four files. |
-| F01-T09 | unit | `count_words` | Words with characters outside ASCII, which take two to four bytes in UTF-8, each count once. | `café naïve 日本語 😀 Ελληνικά` | Returns `5`. |
 | F01-T10 | unit | `count_words` | One byte order mark at the start of the file is ignored (Q5). | Four files: the bytes `EF BB BF` followed by `one two`; `EF BB BF` alone; `EF BB BF` followed by ` word`; `EF BB BF` followed by `\n`. | Returns `2`, `0`, `1`, and `0`. |
-| F01-T11 | unit | `count_words` | A U+FEFF anywhere other than the first character is not white space and is part of a word. | Three files: `a ﻿ b`, `a﻿b`, and `﻿﻿` (two marks at the start). | Returns `3`, `1`, and `1`. |
 | F01-T12 | unit | `count_words` | The count stays right in a large file, where a word or a run of white space may cross any internal read boundary. | A file of 200,000 copies of `word ` with a single line break in place of every 1,000th space, followed by one word of 100,000 `x` characters, then `　end`. The file is larger than 1 MiB. | Returns `200002`. |
 | F01-T13 | functional | `count_words` | Each accepted form of `path` gives the same count. | A file holding `one two three`. Call with its absolute path as a `str`, as a `pathlib.Path`, and as an object of a test class that implements `__fspath__` and returns a `str`. | Returns `3` for each. |
 | F01-T14 | functional | `count_words` | A relative path is resolved against the current working directory. | A file `words.txt` holding `alpha beta` in `tmp_path`. Make `tmp_path` the working directory with `monkeypatch.chdir`, then call with `"words.txt"` and with `pathlib.Path("words.txt")`. | Returns `2` for each. |
@@ -53,6 +51,8 @@ None. The design sets no performance target for `count_words`, and requirements 
 | The text of an exception's message, such as `[Errno 2] No such file or directory: 'missing.txt'` in the design's example. | Python writes the message, and the design promises only the exception type (Q4). F01-T15 to F01-T19 check the type. |
 | `PermissionError` for an unreadable file on Windows. | Removing a file's read right on Windows needs access control lists, which a portable test cannot set and reset reliably. F01-T17 checks the same behavior on Linux. |
 | Performance. | No performance target exists (R14). |
+| F01-T09: the words in `café naïve 日本語 😀 Ελληνικά` each count once. Expected `5`. | Retired by F03, which changes the expected result to `4`, because `😀` holds no letter or digit. F03-T06 covers this input. |
+| F01-T11: a U+FEFF anywhere other than the first character is part of a word. Files `a <U+FEFF> b`, `a<U+FEFF>b`, and two marks at the start, expected `3`, `1`, and `1`. | Retired by F03, which changes the expected results to `2`, `1`, and `0`, because a lone U+FEFF is not a word. F03-T09 covers the first and third files. It joins the second, whose result stays `1`, with a lone mark as `a<U+FEFF>b <U+FEFF>`, so that its test fails against the current code (R09). |
 
 ## 5. Alignment with the Interface Designer
 
@@ -63,3 +63,4 @@ None. The design answered every question this plan raised.
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-11-07 | First draft. |
+| 1.1 | 2026-11-07 | Retired F01-T09 and F01-T11, whose expected results F03 changes, to section 4. |
