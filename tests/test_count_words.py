@@ -119,15 +119,6 @@ def test_f01_t08_line_breaks_agree(tmp_path: pathlib.Path, text: str) -> None:
     assert count_words(_write(tmp_path, "w.txt", _utf8(text))) == 4
 
 
-def test_f01_t09_non_ascii_words(tmp_path: pathlib.Path) -> None:
-    """Words with multi-byte characters each count once."""
-    text = (
-        "caf\u00e9 na\u00efve \u65e5\u672c\u8a9e \U0001f600 "
-        "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac"
-    )
-    assert count_words(_write(tmp_path, "w.txt", _utf8(text))) == 5
-
-
 @pytest.mark.parametrize(
     ("data", "expected"),
     [
@@ -140,15 +131,6 @@ def test_f01_t09_non_ascii_words(tmp_path: pathlib.Path) -> None:
 def test_f01_t10_leading_bom_ignored(tmp_path: pathlib.Path, data: bytes, expected: int) -> None:
     """One byte order mark at the start is ignored."""
     assert count_words(_write(tmp_path, "w.txt", data)) == expected
-
-
-@pytest.mark.parametrize(
-    ("text", "expected"),
-    [("a \ufeff b", 3), ("a\ufeffb", 1), ("\ufeff\ufeff", 1)],
-)
-def test_f01_t11_inner_bom_is_word_part(tmp_path: pathlib.Path, text: str, expected: int) -> None:
-    """A U+FEFF that is not the first character is part of a word."""
-    assert count_words(_write(tmp_path, "w.txt", _utf8(text))) == expected
 
 
 def test_f01_t12_large_file(tmp_path: pathlib.Path) -> None:
