@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "3.1"
+version: "3.2"
 updated: "2026-11-08"
 status: "Approved by Troy on 2026-11-08"
 mirror: "requirements.zh-CN.md"
@@ -40,9 +40,9 @@ The function names in the prototypes show the flow. The Interface Designer fixes
 
 | ID | Feature | Hard dependencies | Soft dependencies | Version | Status |
 | --- | --- | --- | --- | --- | --- |
-| F01 | Count words | None | None | v0.1 | Passes tests on main |
+| F01 | Count words | None | None | v0.1 | Usable on Troy's devices |
 | F02 | Count lines | None | None | v0.2 | Not started |
-| F03 | Words need a letter or digit | F01 | None | v0.1 | Passes tests on main |
+| F03 | Words need a letter or digit | F01 | None | v0.1 | Usable on Troy's devices |
 
 ### 4.1 What each feature does
 
@@ -110,3 +110,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 2.1 | 2026-11-08 | F02 moves to the new version v0.2, so v0.1 holds F01 and F03. The version plan adds v0.2. F02's behavior does not change, and F01 and F03 do not change. |
 | 3.0 | 2026-11-08 | Approved by Troy. |
 | 3.1 | 2026-11-08 | F03 accepted: its status is now Passes tests on main. |
+| 3.2 | 2026-11-08 | Troy accepted v0.1.0 on Troy's PC: F01 and F03 are now Usable on Troy's devices. |

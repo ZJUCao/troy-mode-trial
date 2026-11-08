@@ -1,9 +1,9 @@
 ---
 troy-doc: "v0.1-test-plan"
 lang: "en"
-version: "0.2"
+version: "1.0"
 updated: "2026-11-08"
-status: "Draft."
+status: "Accepted by Troy on 2026-11-08"
 mirror: "test-plan.zh-CN.md"
 ---
 
@@ -43,6 +43,10 @@ Claude's scenarios run only in the release test on Troy's PC, never in CI, so th
 
 ## 5. Acceptance record
 
+| Date | Result | Troy's notes |
+| --- | --- | --- |
+| 2026-11-08 | Accepted as v0.1.0 | Troy tested v0.1.0 in Troy's own scripts on Troy's PC: "it counts my files as I need. Accepted, no notes." No bug deferred. |
+
 None. Troy has not yet accepted v0.1.
 
 ## 6. Change log
@@ -51,3 +55,4 @@ None. Troy has not yet accepted v0.1.
 | --- | --- | --- |
 | 0.1 | 2026-11-08 | First draft. |
 | 0.2 | 2026-11-08 | v0.1-S07 runs on Windows 11 on Troy's PC only, and section 4 no longer lists the GitHub Actions runner, because version tests never run in CI. |
+| 1.0 | 2026-11-08 | Accepted by Troy as v0.1.0. |
