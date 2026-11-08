@@ -9,11 +9,14 @@ def count_words(path: str | os.PathLike[str]) -> int:
     """Count the words in one UTF-8 text file.
 
     A word is a run of one or more characters for which `str.isspace()` is
-    false. Every character for which `str.isspace()` is true separates words,
-    including Unicode white space such as U+3000. Line breaks are white space,
+    false, and at least one character in the run is one for which
+    `str.isalnum()` is true. A run with no letter or digit, such as `--`,
+    `...`, `_`, or a lone U+FEFF, is not a word. Every character for which
+    `str.isspace()` is true separates words, including Unicode white space
+    such as U+3000. Line breaks are white space,
     so LF, CR LF, and CR give the same count. One byte order mark
     (U+FEFF) at the start of the file is ignored. A U+FEFF anywhere else is
-    part of a word.
+    part of the run it is in.
 
     Args:
         path: The path of the file to count, absolute or relative to the
@@ -22,8 +25,9 @@ def count_words(path: str | os.PathLike[str]) -> int:
             accepted.
 
     Returns:
-        The number of words in the file, 0 or more. A file that is empty or
-        holds only white space returns 0.
+        The number of words in the file, 0 or more. A file that is empty,
+        holds only white space, or holds only runs without a letter or digit
+        returns 0.
 
     Raises:
         FileNotFoundError: No file exists at `path`, or `path` is empty.
@@ -38,7 +42,7 @@ def count_words(path: str | os.PathLike[str]) -> int:
         # Path("") becomes Path("."), the current folder; an empty path names no file.
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), text_path)
     with Path(text_path).open(encoding="utf-8-sig") as handle:
-        return len(handle.read().split())
+        return sum(1 for run in handle.read().split() if _has_letter_or_digit(run))
 
 
 def _checked_path(path: object) -> str:
@@ -59,3 +63,15 @@ def _checked_path(path: object) -> str:
     if not isinstance(text_path, str):
         raise TypeError("path must be str or os.PathLike[str], not bytes")
     return text_path
+
+
+def _has_letter_or_digit(run: str) -> bool:
+    """Tell whether a run of non-white-space characters is a word.
+
+    Args:
+        run: A run of one or more characters for which `str.isspace()` is false.
+
+    Returns:
+        True if at least one character of `run` has `str.isalnum()` true.
+    """
+    return any(char.isalnum() for char in run)
