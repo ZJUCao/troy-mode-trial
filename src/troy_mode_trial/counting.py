@@ -58,7 +58,8 @@ def _checked_path(path: object) -> str:
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
     if not isinstance(path, (str, os.PathLike)):
-        raise TypeError(f"path must be str or os.PathLike, not {type(path).__name__}")
+        msg = f"path must be str or os.PathLike, not {type(path).__name__}"
+        raise TypeError(msg)
     text_path = os.fspath(path)
     if not isinstance(text_path, str):
         raise TypeError("path must be str or os.PathLike[str], not bytes")
