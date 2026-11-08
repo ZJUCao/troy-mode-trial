@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "3.0"
+version: "3.1"
 updated: "2026-11-08"
 status: "Approved by Troy on 2026-11-08"
 mirror: "requirements.zh-CN.md"
@@ -42,7 +42,7 @@ The function names in the prototypes show the flow. The Interface Designer fixes
 | --- | --- | --- | --- | --- | --- |
 | F01 | Count words | None | None | v0.1 | Passes tests on main |
 | F02 | Count lines | None | None | v0.2 | Not started |
-| F03 | Words need a letter or digit | F01 | None | v0.1 | Not started |
+| F03 | Words need a letter or digit | F01 | None | v0.1 | Passes tests on main |
 
 ### 4.1 What each feature does
 
@@ -109,3 +109,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 1.2 | 2026-11-07 | A word must hold at least one letter or digit (`str.isalnum()`). F01 is accepted, so the change is the new feature F03, with a hard dependency on F01. The Feature cells of F01 and F02 hold only their short names; section 4.1 describes each feature. |
 | 2.1 | 2026-11-08 | F02 moves to the new version v0.2, so v0.1 holds F01 and F03. The version plan adds v0.2. F02's behavior does not change, and F01 and F03 do not change. |
 | 3.0 | 2026-11-08 | Approved by Troy. |
+| 3.1 | 2026-11-08 | F03 accepted: its status is now Passes tests on main. |

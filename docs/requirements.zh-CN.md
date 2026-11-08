@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "3.0"
+version: "3.1"
 updated: "2026-11-08"
 status: "Troy 已于 2026-11-08 批准"
 mirror-of: "requirements.md"
@@ -42,7 +42,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | --- | --- | --- | --- | --- | --- |
 | F01 | Count words | 无 | 无 | v0.1 | 在 main 上通过测试 |
 | F02 | Count lines | 无 | 无 | v0.2 | 未开始 |
-| F03 | Words need a letter or digit | F01 | 无 | v0.1 | 未开始 |
+| F03 | Words need a letter or digit | F01 | 无 | v0.1 | 在 main 上通过测试 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -111,3 +111,4 @@ flowchart LR
 | 1.2 | 2026-11-07 | 一个词必须至少含一个字母或数字（`str.isalnum()`）。F01 已通过验收，所以这项修改作为新功能 F03，硬依赖 F01。F01 和 F02 的功能列只保留短名；第 4.1 节描述每个功能。 |
 | 2.1 | 2026-11-08 | F02 移到新版本 v0.2，所以 v0.1 只含 F01 和 F03。版本计划加上 v0.2。F02 的行为不变，F01 和 F03 也不变。 |
 | 3.0 | 2026-11-08 | Troy 批准。 |
+| 3.1 | 2026-11-08 | F03 通过验收：状态改为在 main 上通过测试。 |
