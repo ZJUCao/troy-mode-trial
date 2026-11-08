@@ -63,7 +63,6 @@ ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "S104", "S105", "S106", "ANN", "PLR2004"]
-"src/troy_mode_trial/counting.py" = ["EM102"]  # baseline: P01
 
 # ---------------------------------------------------------------- mypy
 [tool.mypy]
