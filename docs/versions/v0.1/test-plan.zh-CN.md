@@ -1,7 +1,7 @@
 ---
 troy-doc: "v0.1-test-plan"
 lang: "zh-CN"
-version: "0.1"
+version: "0.2"
 updated: "2026-11-08"
 status: "草稿。"
 mirror-of: "test-plan.md"
@@ -27,7 +27,7 @@ mirror-of: "test-plan.md"
 | v0.1-S04 | 统计一个不是合法 UTF-8 的文件，与 F01 原型相同。 | Claude | 1. 写入 `latin1.txt`，内容为 Latin-1 编码的 `café au lait`，所以其字节以 `63 61 66 E9 20` 开头。2. 把它所在文件夹设为工作目录。3. 调用 `count_words("latin1.txt")`。 | 抛出 `UnicodeDecodeError`。 |
 | v0.1-S05 | 统计一个并非每串都含字母或数字的文件，与 F03 原型相同。 | Claude | 1. 写入 `dashes.txt`，内容为 `Wait -- what ... don't x--y 3.14 _`。2. 把它所在文件夹设为工作目录。3. 调用 `count_words("dashes.txt")`。 | 返回 `5`。`--`、`...` 和 `_` 这几串不算。 |
 | v0.1-S06 | 统计一个只含不带字母或数字的串的文件，与 F03 原型相同。 | Claude | 1. 写入 `only-symbols.txt`，内容只有 `-- ... !!!`。2. 把它所在文件夹设为工作目录。3. 调用 `count_words("only-symbols.txt")`。 | 返回 `0`。 |
-| v0.1-S07 | Troy 的一个脚本在自己的 Python 进程中统计在 Windows 和 Linux 上生成的文件，并在两个操作系统上得到相同的计数。 | Claude | 1. 写入三个文件。`windows.txt` 内容为字节 `EF BB BF` 后接 `Hello world\r\n  troy-mode  trial\r\n`，与记事本保存的一样。`linux.txt` 内容为 `Hello world\n  troy-mode  trial\n`。`mixed.txt` 内容为 `Wait -- what ... don't x--y 3.14 _\r\n日本語　テキスト 😀\n`，其中 `日本語` 和 `テキスト` 之间的空白是 U+3000。2. 记录每个文件的字节。3. 从文件所在文件夹以外的文件夹启动一个新的 Python 3.13 进程。4. 在该进程中导入 `troy_mode_trial`，以 `pathlib.Path` 形式的绝对路径对每个文件各调用一次 `troy_mode_trial.count_words`，并打印三个计数。5. 在 Windows 11 和 Linux 上各执行一遍第 1 到第 4 步。 | 在两个操作系统上，进程都以退出码 0 结束，并打印 `4`、`4` 和 `7`。每个文件的字节与第 2 步记录的相同。 |
+| v0.1-S07 | Troy 的一个脚本在 Troy 的电脑上、在自己的 Python 进程中统计在 Windows 和 Linux 上生成的文件，相同的词无论换行符如何都得到相同的计数。 | Claude | 1. 写入三个文件。`windows.txt` 内容为字节 `EF BB BF` 后接 `Hello world\r\n  troy-mode  trial\r\n`，与记事本保存的一样。`linux.txt` 内容为 `Hello world\n  troy-mode  trial\n`。`mixed.txt` 内容为 `Wait -- what ... don't x--y 3.14 _\r\n日本語　テキスト 😀\n`，其中 `日本語` 和 `テキスト` 之间的空白是 U+3000。2. 记录每个文件的字节。3. 从文件所在文件夹以外的文件夹启动一个新的 Python 3.13 进程。4. 在该进程中导入 `troy_mode_trial`，以 `pathlib.Path` 形式的绝对路径对每个文件各调用一次 `troy_mode_trial.count_words`，并打印三个计数。所有步骤都在 Troy 的电脑上的 Windows 11 中执行。 | 进程以退出码 0 结束，并打印 `4`、`4` 和 `7`。每个文件的字节与第 2 步记录的相同。 |
 
 ## 3. 性能和压力用例
 
@@ -38,9 +38,8 @@ mirror-of: "test-plan.md"
 | 设备 | 操作系统 | 由谁运行 |
 | --- | --- | --- |
 | Troy 的电脑 | Windows 11，conda 环境 `troy-mode-trial` 中的 Python 3.13 | Claude |
-| GitHub Actions 运行器 | Linux，`ubuntu-24.04`，Python 3.13 | Claude |
 
-v0.1 是一个没有用户界面的库，每个场景都从脚本调用 `count_words`。所以没有场景需要只有 Troy 才有的设备。
+Claude 运行的场景只在 Troy 电脑上的发布测试中运行，从不在 CI 中运行，所以 GitHub Actions 运行器不是这些场景的设备。v0.1 是一个没有用户界面的库，每个场景都从脚本调用 `count_words`。所以没有场景需要只有 Troy 才有的设备。
 
 ## 5. 验收记录
 
@@ -51,3 +50,4 @@ v0.1 是一个没有用户界面的库，每个场景都从脚本调用 `count_w
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | 0.1 | 2026-11-08 | 初稿。 |
+| 0.2 | 2026-11-08 | v0.1-S07 只在 Troy 电脑上的 Windows 11 中运行；第 4 节不再列出 GitHub Actions 运行器，因为版本测试从不在 CI 中运行。 |
