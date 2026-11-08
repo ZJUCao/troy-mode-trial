@@ -1,5 +1,6 @@
 """Word counting for UTF-8 text files."""
 
+import errno
 import os
 from pathlib import Path
 
@@ -25,7 +26,7 @@ def count_words(path: str | os.PathLike[str]) -> int:
         holds only white space returns 0.
 
     Raises:
-        FileNotFoundError: No file exists at `path`.
+        FileNotFoundError: No file exists at `path`, or `path` is empty.
         IsADirectoryError: `path` names a folder (Linux).
         PermissionError: `path` names a folder (Windows), or the process may
             not read the file.
@@ -33,6 +34,9 @@ def count_words(path: str | os.PathLike[str]) -> int:
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
     text_path = _checked_path(path)
+    if text_path == "":
+        # Path("") becomes Path("."), the current folder; an empty path names no file.
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), text_path)
     with Path(text_path).open(encoding="utf-8-sig") as handle:
         return len(handle.read().split())
 
