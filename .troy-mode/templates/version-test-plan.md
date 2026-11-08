@@ -19,7 +19,7 @@ mirror: "test-plan.zh-CN.md"
 
 ## 2. End-to-end scenarios
 
-<!-- template: Take each scenario from the user flows in the requirements. IDs are {{version}}-S01, {{version}}-S02, and so on. Run by says who runs the scenario: Claude, as an automated version test that the Test Engineer writes in version-tests/, or Troy, by hand on a device that only Troy has, such as a phone. -->
+<!-- template: Take each scenario from the user flows in the requirements. IDs are {{version}}-S01, {{version}}-S02, and so on. Run by says who runs the scenario: Claude, as an automated version test that the Test Engineer writes in version-tests/ and that runs only on Troy's PC at release, or Troy, by hand on a device that only Troy has, such as a phone. -->
 
 | ID | Scenario | Run by | Steps | Expected result |
 | --- | --- | --- | --- | --- |
