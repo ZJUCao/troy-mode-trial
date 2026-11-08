@@ -1,9 +1,9 @@
 ---
 troy-doc: "v0.1-test-plan"
 lang: "zh-CN"
-version: "0.2"
+version: "1.0"
 updated: "2026-11-08"
-status: "草稿。"
+status: "Troy 已于 2026-11-08 验收"
 mirror-of: "test-plan.md"
 ---
 
@@ -43,6 +43,10 @@ Claude 运行的场景只在 Troy 电脑上的发布测试中运行，从不在 
 
 ## 5. 验收记录
 
+| 日期 | 结果 | Troy 的备注 |
+| --- | --- | --- |
+| 2026-11-08 | 已验收为 v0.1.0 | Troy tested v0.1.0 in Troy's own scripts on Troy's PC: "it counts my files as I need. Accepted, no notes." No bug deferred. |
+
 无。Troy 尚未验收 v0.1。
 
 ## 6. 修改记录
@@ -51,3 +55,4 @@ Claude 运行的场景只在 Troy 电脑上的发布测试中运行，从不在 
 | --- | --- | --- |
 | 0.1 | 2026-11-08 | 初稿。 |
 | 0.2 | 2026-11-08 | v0.1-S07 只在 Troy 电脑上的 Windows 11 中运行；第 4 节不再列出 GitHub Actions 运行器，因为版本测试从不在 CI 中运行。 |
+| 1.0 | 2026-11-08 | Troy 验收为 v0.1.0。 |
