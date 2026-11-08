@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "1.1"
+version: "2.0"
 updated: "2026-11-07"
 status: "Approved by Troy on 2026-11-07"
 mirror: "requirements.zh-CN.md"
@@ -34,31 +34,39 @@ The function names in the prototypes show the flow. The Interface Designer fixes
 | --- | --- | --- |
 | Count the words of a file | F01 | `docs/prototypes/F01-count-words.md` |
 | Count the lines of a file | F02 | `docs/prototypes/F02-count-lines.md` |
+| Skip runs without a letter or digit | F03 | `docs/prototypes/F03-words-need-a-letter-or-digit.md` |
 
 ## 4. Features
 
 | ID | Feature | Hard dependencies | Soft dependencies | Version | Status |
 | --- | --- | --- | --- | --- | --- |
-| F01 | Count words: count the words in one UTF-8 text file. A word is a run of characters that are not white space. | None | None | v0.1 | Passes tests on main |
-| F02 | Count lines: count the lines in one UTF-8 text file. A last line without a line break still counts. | None | None | v0.1 | Not started |
+| F01 | Count words | None | None | v0.1 | Passes tests on main |
+| F02 | Count lines | None | None | v0.1 | Not started |
+| F03 | Words need a letter or digit | F01 | None | v0.1 | Not started |
+
+### 4.1 What each feature does
+
+- **F01 Count words.** Counts the words in one UTF-8 text file. A word is a run of characters that are not white space.
+- **F02 Count lines.** Counts the lines in one UTF-8 text file. A last line without a line break still counts.
+- **F03 Words need a letter or digit.** Changes F01's word: a word is a run of characters that are not white space and that holds at least one letter or digit, that is, at least one character for which Python's `str.isalnum()` is true. A run of other characters only, such as `--` or `...`, is not a word. A run such as `don't`, `x--y`, or `3.14` is still one word.
 
 ## 5. Dependency graph and order
 
-F01 and F02 do not depend on each other.
+F03 changes F01's word, so F03 has a hard dependency on F01. F02 depends on neither.
 
 ```mermaid
 flowchart LR
-  F01
+  F01 --> F03
   F02
 ```
 
-Topological order: F01, F02
+Topological order: F01, F03, F02
 
 ## 6. Version plan
 
 | Version | Features | What makes it usable on its own |
 | --- | --- | --- |
-| v0.1 | F01, F02 | Troy's scripts can count the words and the lines of a UTF-8 text file. |
+| v0.1 | F01, F03, F02 | Troy's scripts can count the words and the lines of a UTF-8 text file. |
 
 ## 7. Non-functional requirements
 
@@ -97,3 +105,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | --- | --- | --- |
 | 0.1 | 2026-11-07 | First draft. |
 | 1.1 | 2026-11-07 | F01 accepted: its status is now Passes tests on main. |
+| 1.2 | 2026-11-07 | A word must hold at least one letter or digit (`str.isalnum()`). F01 is accepted, so the change is the new feature F03, with a hard dependency on F01. The Feature cells of F01 and F02 hold only their short names; section 4.1 describes each feature. |
