@@ -270,3 +270,11 @@ def _snapshot(path: pathlib.Path) -> tuple[bytes, int, list[str]]:
         path.stat().st_mtime_ns,
         sorted(p.name for p in path.parent.iterdir()),
     )
+
+
+def test_b13_empty_path_raises_file_not_found() -> None:
+    """An empty path names no file, so it raises FileNotFoundError, not a folder error."""
+    with pytest.raises(FileNotFoundError):
+        count_words("")
+    with pytest.raises(FileNotFoundError):
+        count_words(_FsPath(""))  # type: ignore[arg-type]
