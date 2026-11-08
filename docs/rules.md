@@ -1,9 +1,9 @@
 ---
 troy-doc: "rules"
 lang: "en"
-version: "1.0"
-updated: "2026-11-07"
-status: "Seeded by troy-init from troy-mode."
+version: "2.0"
+updated: "2026-11-08"
+status: "Approved by Troy on 2026-11-08"
 mirror: "rules.zh-CN.md"
 ---
 
@@ -41,9 +41,11 @@ mirror: "rules.zh-CN.md"
 | R19 | Commits use the email in Troy's global CLAUDE.md. Commit messages, PR titles, and PR descriptions carry no Claude attribution and do not mention Claude or Anthropic at all, unless `.troy-mode/config.toml` sets the attribution mode to `trailers`. | Hard | Hook and CI | troy-mode | 2026-11-07 |
 | R20 | A merged document or PR description holds no template markers or template guidance. | Hard | CI | troy-mode | 2026-11-07 |
 | R21 | Every change reaches `main` through a PR from its own branch. Never commit on `main`, push `main`, or open a PR from `main`. | Hard | Hook and CI | troy-mode | 2026-11-07 |
+| P01 | An exception message is never an f-string written inside the raise. Build the message in a variable first, for example msg = f"...", then raise ValueError(msg). | Hard | Lint (ruff EM102) | project | 2026-11-08 |
 
 ## 3. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
 | 1.0 | 2026-11-07 | Seeded with R01 to R21 from troy-mode. |
+| 2.0 | 2026-11-08 | Added P01, no f-string inside an exception message, approved by Troy. Existing code: fixed by cleanup PRs. |

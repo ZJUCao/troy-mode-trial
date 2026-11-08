@@ -1,9 +1,9 @@
 ---
 troy-doc: "rules"
 lang: "zh-CN"
-version: "1.0"
-updated: "2026-11-07"
-status: "由 troy-init 根据 troy-mode 初始化。"
+version: "2.0"
+updated: "2026-11-08"
+status: "Troy 已于 2026-11-08 批准"
 mirror-of: "rules.md"
 ---
 
@@ -41,9 +41,11 @@ mirror-of: "rules.md"
 | R19 | commit 使用 Troy 全局 CLAUDE.md 里规定的邮箱。commit 信息、PR 标题和 PR 描述不带任何 Claude 署名，也完全不提 Claude 或 Anthropic，除非 `.troy-mode/config.toml` 把署名检查模式设为 `trailers`。 | 硬 | Hook 和 CI | troy-mode | 2026-11-07 |
 | R20 | 合并的文档和 PR 描述里没有模板标记或填写说明。 | 硬 | CI | troy-mode | 2026-11-07 |
 | R21 | 每个改动都通过从单独分支发起的 PR 进入 `main`。永远不要在 `main` 上提交、推送 `main`，或从 `main` 开 PR。 | 硬 | Hook 和 CI | troy-mode | 2026-11-07 |
+| P01 | 异常信息不能在 raise 里直接写成 f-string。先把信息赋给变量，例如 msg = f"..."，再 raise ValueError(msg)。 | 硬 | Lint（ruff EM102） | project | 2026-11-08 |
 
 ## 3. 修改记录
 
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | 1.0 | 2026-11-07 | 初始化，包含来自 troy-mode 的 R01 到 R21。 |
+| 2.0 | 2026-11-08 | 新增 P01：异常信息里不直接写 f-string，经 Troy 批准。已有代码：用清理 PR 修复。 |
