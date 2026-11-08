@@ -1,7 +1,7 @@
 ---
 troy-doc: "rules"
 lang: "en"
-version: "2.0"
+version: "3.0"
 updated: "2026-11-08"
 status: "Approved by Troy on 2026-11-08"
 mirror: "rules.zh-CN.md"
@@ -42,6 +42,7 @@ mirror: "rules.zh-CN.md"
 | R20 | A merged document or PR description holds no template markers or template guidance. | Hard | CI | troy-mode | 2026-11-07 |
 | R21 | Every change reaches `main` through a PR from its own branch. Never commit on `main`, push `main`, or open a PR from `main`. | Hard | Hook and CI | troy-mode | 2026-11-07 |
 | P01 | An exception message is never an f-string written inside the raise. Build the message in a variable first, for example msg = f"...", then raise ValueError(msg). | Hard | Lint (ruff EM102) | project | 2026-11-08 |
+| P02 | Every error message says which file it is about. This includes Python's own exceptions that the library lets through: if Python's message does not name the file, catch the exception and raise the same type again with the file's path in its message. An error that is about no file, such as a path argument of the wrong type, is exempt. | Review | Code Reviewer. The Architect checks the error tables in design reviews. | project | 2026-11-08 |
 
 ## 3. Change log
 
@@ -49,3 +50,4 @@ mirror: "rules.zh-CN.md"
 | --- | --- | --- |
 | 1.0 | 2026-11-07 | Seeded with R01 to R21 from troy-mode. |
 | 2.0 | 2026-11-08 | Added P01, no f-string inside an exception message, approved by Troy. Existing code: fixed by cleanup PRs. |
+| 3.0 | 2026-11-08 | Added P02, every error message names its file, approved by Troy. Existing code: fixed when touched. |
