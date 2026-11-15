@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "3.2"
-updated: "2026-11-08"
-status: "Troy 已于 2026-11-08 批准"
+version: "4.0"
+updated: "2026-11-14"
+status: "Troy 已于 2026-11-14 批准"
 mirror-of: "requirements.md"
 ---
 
@@ -11,7 +11,7 @@ mirror-of: "requirements.md"
 
 ## 1. 目标
 
-troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里的内容。Troy 在自己的脚本里调用它。0.1 版统计一个文件的词数，0.2 版再加上它的行数。
+troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里的内容。Troy 在自己的脚本里调用它，也在 PowerShell 里运行它的 `wordcount` 命令。0.1 版统计一个文件的词数，0.2 版加上 `wordcount` 命令，并统计一个文件的行数。
 
 ## 2. 用户
 
@@ -19,7 +19,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 
 ## 3. 用户如何使用
 
-这个库只提供函数，没有命令行程序。
+这个库提供函数，以及一个命令行程序 `wordcount`（F04）。
 
 1. Troy 在 Python 脚本或会话里导入 `troy_mode_trial`。
 2. Troy 调用一个计数函数，传入一个 UTF-8 文本文件的路径。
@@ -28,6 +28,8 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 
 原型里的函数名只用来展示流程。最终的函数名和签名由界面设计师在各功能的设计里确定。
 
+要在 Python 之外统计词数，Troy 在 PowerShell 里输入 `wordcount FILE`。命令打印文件里的词数，按 F03 的方式计数。文件不存在时，它打印一条写明文件名的错误，退出码不为 0。
+
 ### 3.1 原型
 
 | 原型 | 功能 | 文件 |
@@ -35,6 +37,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | 统计一个文件的词数 | F01 | `docs/prototypes/F01-count-words.md` |
 | 统计一个文件的行数 | F02 | `docs/prototypes/F02-count-lines.md` |
 | 跳过不含字母或数字的串 | F03 | `docs/prototypes/F03-words-need-a-letter-or-digit.md` |
+| 在 PowerShell 里统计词数 | F04 | `docs/prototypes/F04-word-count-command.md` |
 
 ## 4. 功能点
 
@@ -43,6 +46,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F01 | Count words | 无 | 无 | v0.1 | 可在 Troy 的设备上使用 |
 | F02 | Count lines | 无 | 无 | v0.2 | 未开始 |
 | F03 | Words need a letter or digit | F01 | 无 | v0.1 | 可在 Troy 的设备上使用 |
+| F04 | Word count command | F03 | 无 | v0.2 | 未开始 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -51,25 +55,27 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 - **F01 Count words（统计词数）。** 统计一个 UTF-8 文本文件里的词数。一个词是一串连续的非空白字符。
 - **F02 Count lines（统计行数）。** 统计一个 UTF-8 文本文件里的行数。最后一行没有换行符也算一行。
 - **F03 Words need a letter or digit（词须含字母或数字）。** 修改 F01 对词的定义：一个词是一串连续的非空白字符，并且至少含一个字母或数字，即至少一个使 Python 的 `str.isalnum()` 为真的字符。只由其他字符组成的串，例如 `--` 或 `...`，不是词。`don't`、`x--y`、`3.14` 这样的串仍是一个词。
+- **F04 Word count command（词数命令）。** 给 Troy 一个在 PowerShell 里使用的 `wordcount FILE` 命令。它打印一个 UTF-8 文本文件里的词数，按 F03 的方式计数，让 Troy 在 Python 之外也能统计词数。文件不存在时，它打印一条写明文件名的错误，退出码不为 0。
 
 ## 5. 依赖图和顺序
 
-F03 修改 F01 对词的定义，所以 F03 硬依赖 F01。F02 不依赖其他功能。
+F03 修改 F01 对词的定义，所以 F03 硬依赖 F01。F04 按 F03 的方式计数，所以 F04 硬依赖 F03。F02 不依赖其他功能。
 
 ```mermaid
 flowchart LR
   F01 --> F03
+  F03 --> F04
   F02
 ```
 
-拓扑顺序：F01, F03, F02
+拓扑顺序：F01, F03, F04, F02
 
 ## 6. 版本计划
 
 | 版本 | 功能 | 凭什么能单独使用 |
 | --- | --- | --- |
 | v0.1 | F01, F03 | Troy 的脚本可以统计一个 UTF-8 文本文件的词数，其中每个词至少含一个字母或数字。 |
-| v0.2 | F02 | Troy 的脚本还可以统计一个 UTF-8 文本文件的行数。 |
+| v0.2 | F04, F02 | Troy 可以在 PowerShell 里用 `wordcount` 命令统计一个 UTF-8 文本文件的词数，Troy 的脚本还可以统计一个 UTF-8 文本文件的行数。 |
 
 ## 7. 非功能需求
 
@@ -87,7 +93,7 @@ flowchart LR
 
 - UTF-8 以外的编码。
 - 统计一个文件夹里的文件，或一次调用统计多个文件。
-- 命令行程序。
+- `wordcount` 以外的命令行程序，以及 `wordcount` 的任何选项或第二个文件参数。
 
 ## 9. 待定问题
 
@@ -113,3 +119,5 @@ flowchart LR
 | 3.0 | 2026-11-08 | Troy 批准。 |
 | 3.1 | 2026-11-08 | F03 通过验收：状态改为在 main 上通过测试。 |
 | 3.2 | 2026-11-08 | Troy 在自己的电脑上验收了 v0.1.0：F01 和 F03 的状态改为可在 Troy 的设备上使用。 |
+| 3.3 | 2026-11-14 | 新功能 F04，Word count command：在 PowerShell 里使用的 `wordcount FILE` 命令，打印一个 UTF-8 文本文件的词数，按 F03 的方式计数。F04 硬依赖 F03，在顺序里排在 F02 之前（F01, F03, F04, F02），与 F02 同属 v0.2。它的原型是 `docs/prototypes/F04-word-count-command.md`。第 1、3、8 节不再排除命令行程序。F01、F02 和 F03 不变。 |
+| 4.0 | 2026-11-14 | Troy 批准。 |
