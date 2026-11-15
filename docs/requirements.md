@@ -1,8 +1,8 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "4.0"
-updated: "2026-11-14"
+version: "4.1"
+updated: "2026-11-15"
 status: "Approved by Troy on 2026-11-14"
 mirror: "requirements.zh-CN.md"
 ---
@@ -46,7 +46,7 @@ To count words outside Python, Troy types `wordcount FILE` in PowerShell. The co
 | F01 | Count words | None | None | v0.1 | Usable on Troy's devices |
 | F02 | Count lines | None | None | v0.2 | Not started |
 | F03 | Words need a letter or digit | F01 | None | v0.1 | Usable on Troy's devices |
-| F04 | Word count command | F03 | None | v0.2 | Not started |
+| F04 | Word count command | F03 | None | v0.2 | Ran for real on Troy's PC |
 
 ### 4.1 What each feature does
 
@@ -119,3 +119,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 3.2 | 2026-11-08 | Troy accepted v0.1.0 on Troy's PC: F01 and F03 are now Usable on Troy's devices. |
 | 3.3 | 2026-11-14 | The new feature F04, Word count command: a `wordcount FILE` command in PowerShell that prints the words of one UTF-8 text file, counted as F03 counts them. F04 has a hard dependency on F03, comes before F02 in the order (F01, F03, F04, F02), and is in v0.2 with F02. Its prototype is `docs/prototypes/F04-word-count-command.md`. Sections 1, 3, and 8 no longer rule out a command-line program. F01, F02, and F03 do not change. |
 | 4.0 | 2026-11-14 | Approved by Troy. |
+| 4.1 | 2026-11-15 | F04 accepted: its status is now Ran for real on Troy's PC. |
