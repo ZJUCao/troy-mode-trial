@@ -23,6 +23,7 @@
 | [`progress`](progress.md) | `.troy-mode/progress.md` | No | Main session | Every stage. Local and git-ignored. |
 | [`escalation`](escalation.md) | None. It is the shape of a chat message. | No | Main session | Each escalation |
 | [`pull-request`](pull-request.md) | `.github/pull_request_template.md` | No. PRs are in English. | Whoever opens the PR | Every PR |
+| [`summary-for-troy`](summary-for-troy.md) | None. It opens a PR's description. | No. It holds both languages, Chinese first. | The role that writes the document | Every design, test plan, requirements, and architecture PR |
 
 The Chinese mirror of `<name>.md` is `<name>.zh-CN.md` in the same folder. `<slug>` is lowercase words joined by hyphens, for example `F04-export-csv`.
 
@@ -71,6 +72,7 @@ The features table in `docs/requirements.md` changes only in PR 6, at version ac
 | --- | --- |
 | Not started | The requirements are approved. |
 | Passes tests on main | PR 6 merges. The feature's tests are now must-pass. |
+| Ran for real on Troy's PC | PR 6 merges with a real run in which the feature's own commands ran on Troy's PC and matched, apart from those that wait for a later feature (F12). |
 | Usable on Troy's devices | Troy accepts the version that contains it. |
 | Needs rework | An approved change affects it. The label names the change. |
 
@@ -95,4 +97,4 @@ The PR title is `[<ID> <stage>] <summary>`, or `[<kind>] <summary>` for a PR tha
 | Rule change | `[rules] Add P01, no global state` | Rules table and check config |
 | Refactor | `[refactor] Split storage.py`, or a rule's cleanup: `[refactor] Apply P01 to storage` | Source |
 
-The description has four sections: Why, What, Checks, and Soft-limit reason.
+The description has four sections: Why, What, Checks, and Soft-limit reason. A design, test plan, requirements, or architecture PR opens with the summary for Troy before them, in Chinese and then English (R22).
