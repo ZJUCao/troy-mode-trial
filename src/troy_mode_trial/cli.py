@@ -1,6 +1,45 @@
 """The command line of the wordcount program."""
 
+import argparse
+import pathlib
+import sys
 from collections.abc import Sequence
+
+from troy_mode_trial import count_words
+
+
+def _reason(error: Exception, path: str) -> str:
+    """Maps an exception from counting to the reason text of the error line.
+
+    Args:
+        error: An `OSError` or a `UnicodeDecodeError`.
+        path: The file argument as typed. On Windows, a `PermissionError` for
+            a path that names a folder is reported as a folder.
+
+    Returns:
+        One of the fixed reason texts.
+    """
+    if isinstance(error, UnicodeDecodeError):
+        return "not valid UTF-8"
+    if isinstance(error, FileNotFoundError | NotADirectoryError):
+        return "no such file"
+    if isinstance(error, IsADirectoryError):
+        return "is a folder"
+    if isinstance(error, PermissionError):
+        return "is a folder" if pathlib.Path(path).is_dir() else "permission denied"
+    return "cannot read file"
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    """Builds the argument parser of the command.
+
+    Returns:
+        A parser named `wordcount` with one positional argument and no help
+        option.
+    """
+    parser = argparse.ArgumentParser(prog="wordcount", add_help=False)
+    parser.add_argument("FILE")
+    return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -28,5 +67,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         SystemExit: With code 2 when the arguments are wrong. argparse writes
             the usage line `usage: wordcount FILE` and its message to
             standard error first.
+
+    Any other exception, apart from `OSError` and `UnicodeDecodeError`, is a
+    bug and reaches the caller.
     """
-    raise NotImplementedError
+    args = _build_parser().parse_args(sys.argv[1:] if argv is None else list(argv))
+    path: str = args.FILE
+    try:
+        count = count_words(path)
+    except (OSError, UnicodeDecodeError) as error:
+        sys.stderr.write(f"wordcount: {path}: {_reason(error, path)}\n")
+        return 2
+    sys.stdout.write(f"{count}\n")
+    return 0
