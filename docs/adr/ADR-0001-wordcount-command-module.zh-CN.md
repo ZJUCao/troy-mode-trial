@@ -1,7 +1,7 @@
 ---
 troy-doc: "ADR-0001"
 lang: "zh-CN"
-version: "1.0"
+version: "1.1"
 updated: "2026-11-14"
 status: "Troy 已于 2026-11-14 批准"
 mirror-of: "ADR-0001-wordcount-command-module.md"
@@ -11,7 +11,7 @@ mirror-of: "ADR-0001-wordcount-command-module.md"
 
 ## 1. 状态
 
-提议中（Proposed）
+已接受（Accepted）。决定第 4 点中文件错误的退出码由 ADR-0002 取代：文件错误以退出码 2 退出，而不是 1。
 
 ## 2. 背景
 
