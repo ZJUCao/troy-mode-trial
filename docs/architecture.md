@@ -1,7 +1,7 @@
 ---
 troy-doc: "architecture"
 lang: "en"
-version: "2.0"
+version: "3.0"
 updated: "2026-11-14"
 status: "Approved by Troy on 2026-11-14"
 mirror: "architecture.zh-CN.md"
@@ -45,9 +45,10 @@ flowchart TD
 ## 6. Error handling
 
 - **counting.** It lets Python's own exceptions reach the caller, such as `FileNotFoundError` or `UnicodeDecodeError`, and defines no exception of its own (requirements Q4).
-- **cli.** It catches only the exceptions that counting documents for a file: `OSError` and its subclasses, and `UnicodeDecodeError`. For one of them it writes one line `wordcount: <FILE as typed>: <reason>` to standard error and returns exit code 1.
+- **cli.** It catches only the exceptions that counting documents for a file: `OSError` and its subclasses, and `UnicodeDecodeError`. For one of them it writes one line `wordcount: <FILE as typed>: <reason>` to standard error and returns exit code 2, because Troy's scripts treat code 2 as an error (ADR-0002).
 - A wrong command line, such as no file or two files, exits with code 2 and a usage line on standard error, as `argparse` does.
-- Any other exception is a bug, and cli does not catch it.
+- A file error and a wrong command line share exit code 2. Only the text on standard error tells them apart: the line `wordcount: <FILE as typed>: <reason>` for a file error, and a usage line for a wrong command line.
+- Any other exception is a bug, and cli does not catch it. Python writes the traceback to standard error and exits with code 1, so code 1 means only a bug.
 - On success, cli returns exit code 0.
 - F04's design fixes the reason texts and the exact signature of `main`.
 
@@ -64,7 +65,8 @@ None. The program uses the standard library only (requirements 7).
 
 | ADR | Title | Status |
 | --- | --- | --- |
-| ADR-0001 | The `wordcount` command lives in its own module, cli | Proposed |
+| ADR-0001 | The `wordcount` command lives in its own module, cli | Accepted. The exit code for a file error in point 4 of its decision is replaced by ADR-0002. |
+| ADR-0002 | A file error in `wordcount` exits with code 2 | Accepted |
 
 ## 12. Change log
 
@@ -73,3 +75,5 @@ None. The program uses the standard library only (requirements 7).
 | 1.0 | 2026-11-07 | First version, with the module counting. Approved by Troy for troy-init's trial. |
 | 1.1 | 2026-11-14 | For F04, the `wordcount` command (ADR-0001): the tech stack adds the console script in `[project.scripts]` and `argparse`. The module table adds cli, and counting's Owns narrows to its two files. New sections: dependency rules, error handling, the rule for standard output and `print()`, third-party dependencies, and decision records. |
 | 2.0 | 2026-11-14 | Approved by Troy. |
+| 2.1 | 2026-11-14 | Troy's change on PR #39 (ADR-0002): a file error in cli returns exit code 2 instead of 1, because Troy's scripts treat 2 as an error. Section 6 says that a file error and a wrong command line share code 2 and only the text on standard error tells them apart, and that an uncaught bug exits with code 1 through Python's traceback. The decision records list ADR-0001 as Accepted, with its exit code replaced by ADR-0002, and add ADR-0002. |
+| 3.0 | 2026-11-14 | Approved by Troy. |

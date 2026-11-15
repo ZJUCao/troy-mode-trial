@@ -1,7 +1,7 @@
 ---
 troy-doc: "ADR-0001"
 lang: "en"
-version: "1.0"
+version: "1.1"
 updated: "2026-11-14"
 status: "Approved by Troy on 2026-11-14"
 mirror: "ADR-0001-wordcount-command-module.zh-CN.md"
@@ -11,7 +11,7 @@ mirror: "ADR-0001-wordcount-command-module.zh-CN.md"
 
 ## 1. Status
 
-Proposed
+Accepted. The exit code for a file error in point 4 of the decision is replaced by ADR-0002: a file error exits with code 2, not 1.
 
 ## 2. Context
 
