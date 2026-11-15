@@ -12,6 +12,9 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = []
 
+[project.scripts]
+wordcount = "troy_mode_trial.cli:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/troy_mode_trial"]
 
