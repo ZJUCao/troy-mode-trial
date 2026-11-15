@@ -1,8 +1,8 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "4.0"
-updated: "2026-11-14"
+version: "4.1"
+updated: "2026-11-15"
 status: "Troy 已于 2026-11-14 批准"
 mirror-of: "requirements.md"
 ---
@@ -46,7 +46,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F01 | Count words | 无 | 无 | v0.1 | 可在 Troy 的设备上使用 |
 | F02 | Count lines | 无 | 无 | v0.2 | 未开始 |
 | F03 | Words need a letter or digit | F01 | 无 | v0.1 | 可在 Troy 的设备上使用 |
-| F04 | Word count command | F03 | 无 | v0.2 | 未开始 |
+| F04 | Word count command | F03 | 无 | v0.2 | 在 Troy 的电脑上真跑过 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -121,3 +121,4 @@ flowchart LR
 | 3.2 | 2026-11-08 | Troy 在自己的电脑上验收了 v0.1.0：F01 和 F03 的状态改为可在 Troy 的设备上使用。 |
 | 3.3 | 2026-11-14 | 新功能 F04，Word count command：在 PowerShell 里使用的 `wordcount FILE` 命令，打印一个 UTF-8 文本文件的词数，按 F03 的方式计数。F04 硬依赖 F03，在顺序里排在 F02 之前（F01, F03, F04, F02），与 F02 同属 v0.2。它的原型是 `docs/prototypes/F04-word-count-command.md`。第 1、3、8 节不再排除命令行程序。F01、F02 和 F03 不变。 |
 | 4.0 | 2026-11-14 | Troy 批准。 |
+| 4.1 | 2026-11-15 | F04 通过验收：状态改为在 Troy 的电脑上真跑过。 |

@@ -17,5 +17,5 @@ PS> wordcount notes.txt
 PS> wordcount missing.txt
 wordcount: missing.txt: no such file
 PS> $LASTEXITCODE
-1
+2
 ```
