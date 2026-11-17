@@ -1,8 +1,8 @@
 ---
 troy-doc: "rules"
 lang: "zh-CN"
-version: "4.1"
-updated: "2026-11-14"
+version: "4.2"
+updated: "2026-11-17"
 status: "Troy 已于 2026-11-08 批准"
 mirror-of: "rules.md"
 ---
@@ -38,7 +38,7 @@ mirror-of: "rules.md"
 | R16 | 引入新的第三方依赖需要架构师批准。 | 审查 | 架构师。CI 会标出所有依赖文件的改动。 | troy-mode | 2026-11-07 |
 | R17 | 审查循环最多 3 轮，之后升级上报。 | 流程 | troy-mode | troy-mode | 2026-11-07 |
 | R18 | 前 3 个功能的 PR 1 和 PR 2 由 Troy 批准，方式是在聊天里回复或合并它们。在聊天里批准之后，由 Claude 合并。其他 PR 在检查和审查都通过后由 Claude 合并。什么时候全部交给 Claude 合并，由 Troy 决定。 | 流程 | troy-mode | troy-mode | 2026-11-07 |
-| R19 | commit 使用 Troy 全局 CLAUDE.md 里规定的邮箱。commit 信息、PR 标题和 PR 描述不带任何 Claude 署名，也完全不提 Claude 或 Anthropic，除非 `.troy-mode/config.toml` 把署名检查模式设为 `trailers`。 | 硬 | Hook 和 CI | troy-mode | 2026-11-07 |
+| R19 | commit 使用 Troy 全局 CLAUDE.md 里规定的邮箱。commit 信息、PR 标题和描述、PR 评论和评审、issue 以及发布说明不带任何 Claude 署名，也完全不提 Claude 或 Anthropic，除非 `.troy-mode/config.toml` 把署名检查模式设为 `trailers`。发到 GitHub 的文字在发出前检查，因为 GitHub 会保留每次编辑的历史。 | 硬 | Hook 和 CI。评论、评审、issue 和发布说明只由 hook 在发出前检查。 | troy-mode | 2026-11-07 |
 | R20 | 合并的文档和 PR 描述里没有模板标记或填写说明。 | 硬 | CI | troy-mode | 2026-11-07 |
 | R21 | 每个改动都通过从单独分支发起的 PR 进入 `main`。永远不要在 `main` 上提交、推送 `main`，或从 `main` 开 PR。 | 硬 | Hook 和 CI | troy-mode | 2026-11-07 |
 | R22 | 每个接口设计、测试计划、需求和架构 PR 的描述都以给 Troy 的摘要开头，先中文后英文：对 Troy 有什么变化、需要 Troy 决定的每一件事及推荐，以及风险。每种语言最多 2,000 个字符（`.troy-mode/config.toml` 里的 `[summary] max_chars`），不含内部编号。 | 硬 | CI | troy-mode | 2026-11-14 |
@@ -54,3 +54,4 @@ mirror-of: "rules.md"
 | 3.0 | 2026-11-08 | 新增 P02：每条错误信息写出所涉文件，经 Troy 批准。已有代码：改到时修复。 |
 | 4.0 | 2026-11-08 | 停用 P02：每条错误信息写出所涉文件，经 Troy 批准。原因：这条规则只是为了试运行而加。 |
 | 4.1 | 2026-11-14 | troy-mode 的规则更新到 troy-pstack 0.5.0。 |
+| 4.2 | 2026-11-17 | troy-mode 的规则更新到 tstack 0.7.0。 |
