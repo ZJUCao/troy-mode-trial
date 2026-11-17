@@ -80,3 +80,7 @@ mode = "strict"
 
 [roles.code-reviewer]
 effort = "medium"
+
+[flow]
+# Troy's decision on 2026-11-16 (D62): "Keep approving PR 1 and PR 2 of the next feature too: set troy_approves_first to 4."
+troy_approves_first = 4
