@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "4.2"
+version: "5.0"
 updated: "2026-11-17"
-status: "Approved by Troy on 2026-11-14"
+status: "Approved by Troy on 2026-11-17"
 mirror: "requirements.zh-CN.md"
 ---
 
@@ -11,7 +11,7 @@ mirror: "requirements.zh-CN.md"
 
 ## 1. Goal
 
-troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts, and runs its `wordcount` command in PowerShell. Version 0.1 counts the words of one file. Version 0.2 adds the `wordcount` command and also counts the lines of a file.
+troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts, and runs its `wordcount` command in PowerShell. Version 0.1 counts the words of one file. Version 0.2 adds the `wordcount` command and also counts the lines of a file. Version 0.3 adds the `--lines` option, so `wordcount` can also print the lines of a file.
 
 ## 2. Users
 
@@ -19,7 +19,7 @@ Troy is the only user. Troy runs the scripts that call the library on Windows 11
 
 ## 3. How users interact with it
 
-The library has functions, and one command-line program, `wordcount` (F04).
+The library has functions, and one command-line program, `wordcount` (F04, with the `--lines` option of F05).
 
 1. Troy imports `troy_mode_trial` in a Python script or session.
 2. Troy calls a counting function with the path of one UTF-8 text file.
@@ -30,6 +30,8 @@ The function names in the prototypes show the flow. The Interface Designer fixes
 
 To count words outside Python, Troy types `wordcount FILE` in PowerShell. The command prints the number of words in the file, counted as F03 counts them. If the file is missing, it prints an error that names the file and exits with a code that is not 0.
 
+To count lines outside Python, Troy types `wordcount --lines FILE`. The command prints the number of lines in the file, counted as F02 counts them, instead of its words. A missing file gives the same error and exit code as without the option.
+
 ### 3.1 Prototypes
 
 | Prototype | Feature | File |
@@ -38,6 +40,7 @@ To count words outside Python, Troy types `wordcount FILE` in PowerShell. The co
 | Count the lines of a file | F02 | `docs/prototypes/F02-count-lines.md` |
 | Skip runs without a letter or digit | F03 | `docs/prototypes/F03-words-need-a-letter-or-digit.md` |
 | Count words in PowerShell | F04 | `docs/prototypes/F04-word-count-command.md` |
+| Count lines in PowerShell | F05 | `docs/prototypes/F05-line-count-option.md` |
 
 ## 4. Features
 
@@ -47,6 +50,7 @@ To count words outside Python, Troy types `wordcount FILE` in PowerShell. The co
 | F02 | Count lines | None | None | v0.2 | Passes tests on main |
 | F03 | Words need a letter or digit | F01 | None | v0.1 | Usable on Troy's devices |
 | F04 | Word count command | F03 | None | v0.2 | Ran for real on Troy's PC |
+| F05 | Line count option | F02, F04 | None | v0.3 | Not started |
 
 ### 4.1 What each feature does
 
@@ -54,19 +58,21 @@ To count words outside Python, Troy types `wordcount FILE` in PowerShell. The co
 - **F02 Count lines.** Counts the lines in one UTF-8 text file. A last line without a line break still counts.
 - **F03 Words need a letter or digit.** Changes F01's word: a word is a run of characters that are not white space and that holds at least one letter or digit, that is, at least one character for which Python's `str.isalnum()` is true. A run of other characters only, such as `--` or `...`, is not a word. A run such as `don't`, `x--y`, or `3.14` is still one word.
 - **F04 Word count command.** Gives Troy a `wordcount FILE` command in PowerShell. It prints the number of words in one UTF-8 text file, counted as F03 counts them, so Troy can count words outside Python. If the file is missing, it prints an error that names the file, and its exit code is not 0.
+- **F05 Line count option.** Adds the `--lines` option to `wordcount`: `wordcount --lines FILE` prints the number of lines in one UTF-8 text file, counted as F02 counts them, instead of its words. `wordcount FILE` without the option still prints the words. A missing file gives the same error and exit code as `wordcount FILE`.
 
 ## 5. Dependency graph and order
 
-F03 changes F01's word, so F03 has a hard dependency on F01. F04 counts words as F03 counts them, so F04 has a hard dependency on F03. F02 depends on none of them.
+F03 changes F01's word, so F03 has a hard dependency on F01. F04 counts words as F03 counts them, so F04 has a hard dependency on F03. F02 depends on none of them. F05 adds an option to F04's command and counts lines as F02 counts them, so F05 has a hard dependency on F02 and on F04.
 
 ```mermaid
 flowchart LR
   F01 --> F03
   F03 --> F04
-  F02
+  F04 --> F05
+  F02 --> F05
 ```
 
-Topological order: F01, F03, F04, F02
+Topological order: F01, F03, F04, F02, F05
 
 ## 6. Version plan
 
@@ -74,6 +80,7 @@ Topological order: F01, F03, F04, F02
 | --- | --- | --- |
 | v0.1 | F01, F03 | Troy's scripts can count the words of a UTF-8 text file, where a word holds at least one letter or digit. |
 | v0.2 | F04, F02 | Troy can count the words of a UTF-8 text file with the `wordcount` command in PowerShell, and Troy's scripts can also count the lines of a UTF-8 text file. |
+| v0.3 | F05 | Troy can count the lines of a UTF-8 text file with `wordcount --lines` in PowerShell. |
 
 ## 7. Non-functional requirements
 
@@ -91,7 +98,7 @@ None
 
 - Encodings other than UTF-8.
 - Counting a folder of files, or several files in one call.
-- Any command-line program other than `wordcount`, and any `wordcount` option or second file argument.
+- Any command-line program other than `wordcount`, any `wordcount` option other than `--lines`, and a second file argument.
 
 ## 9. Open questions
 
@@ -105,6 +112,9 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | Q4 | What happens when the file is missing or is not valid UTF-8? | The function raises Python's own exception, such as `FileNotFoundError` or `UnicodeDecodeError`. It defines no exception of its own. | Decided by Troy in advance for this trial: as proposed. |
 | Q5 | Does a UTF-8 byte order mark at the start of the file count as text? | No. The function ignores one byte order mark at the start of the file, so the mark never counts as a word. | Decided by Troy in advance for this trial: as proposed. |
 | Q6 | The architecture 1.0 says that the module `counting` counts the words of a text. Does F02 need an architecture change? | No. `counting` owns `src/troy_mode_trial/**`, and counting lines is counting too. F02 fits the module as it is. | Decided by Troy in advance for this trial: as proposed. |
+| Q7 | Does F05's option also get a short form, such as `-l`? | No. Only `--lines`, as Troy asked; a short form can come later as its own change. | Decided by Troy on 2026-11-17: as proposed ("全按推荐"). |
+| Q8 | What does `wordcount --lines` print for a missing file, or a file that is not valid UTF-8? | The same error message and exit code as `wordcount FILE` gives for that file. | Decided by Troy on 2026-11-17: as proposed ("全按推荐"). |
+| Q9 | When is F05 built? | After v0.2 is released, so the v0.2 release holds only F02 and F04. | Decided by Troy on 2026-11-17: as proposed ("全按推荐"). |
 
 ## 10. Change log
 
@@ -121,3 +131,5 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 4.0 | 2026-11-14 | Approved by Troy. |
 | 4.1 | 2026-11-15 | F04 accepted: its status is now Ran for real on Troy's PC. |
 | 4.2 | 2026-11-17 | F02 accepted: its status is now Passes tests on main. F02 is a library function with no command of its own to run for real. |
+| 4.3 | 2026-11-17 | The new feature F05, Line count option: `wordcount --lines FILE` prints the lines of one UTF-8 text file, counted as F02 counts them. F02 and F04 are accepted and do not change, so F05 is a new feature with a hard dependency on both, last in the order (F01, F03, F04, F02, F05), in the new version v0.3. Its prototype is `docs/prototypes/F05-line-count-option.md`. Section 8 allows the `--lines` option. New questions Q7 to Q9. From Troy's idea #51. |
+| 5.0 | 2026-11-17 | Approved by Troy. |
