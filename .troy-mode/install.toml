@@ -3,26 +3,25 @@
 # nobody changed from one someone edited. Do not edit it by hand.
 
 [plugin]
-version = "0.5.0"
-commit = "ad973ff511de28568dd6c23f7ff27bffdfb3b278"
+version = "0.6.0"
 
 [steps]
 setup = "2026-11-07"
 lang = "2026-11-07"
-upgrade = "2026-11-14"
+upgrade = "2026-11-16"
 
 [lang]
 name = "python"
 
 [files]
 ".github/pull_request_template.md" = "b37d623f08f7429580fd887a1eb2708a6a72e610764aa9d8ceca8ef468427684"
-".github/workflows/troy-mode.yml" = "becc03af526dbbd23b045a1bd9fe56d0788e42c5623ee3d0e658d1c4b12dda78"
+".github/workflows/troy-mode.yml" = "9d3a0a6b9bedfde7b747002ac1b9bbb0fbaad322c266613db8eab6d61c5d3b09"
 ".troy-mode/checks/.gitignore" = "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
 ".troy-mode/checks/git-hooks/commit-msg" = "6a1b4bf551679b968955b03e224d332b20ec2baf0084e0dba80089cef0fa5b90"
 ".troy-mode/checks/git-hooks/pre-commit" = "41afe22be776b78e86f5ffcccf8e65406f46fb9812d68ca90ecac27d7b1a01df"
 ".troy-mode/checks/git-hooks/pre-merge-commit" = "64562119f72cf6642b6dcfa84c3ba0cc4ec4bdf2ee6d55897adce12768384b27"
 ".troy-mode/checks/git-hooks/pre-push" = "45d7abd5dd6e2276163860e38019775c177bb498bcff62d170e5e37c6287d8a5"
-".troy-mode/checks/troy_check.py" = "73dfcb7df4111c21cf3ebded7cb0066f094264571e4cbf2472462389d8112b52"
+".troy-mode/checks/troy_check.py" = "b77c29000b29fe4bcd0f6ebdb98daee2f0790d14d48c5279f356f04b6ce0180a"
 ".troy-mode/checks/troycheck/__init__.py" = "eb9ff336d68889703018734e3a82e204af8efeda9e4f43cf1f7806efd55a3659"
 ".troy-mode/checks/troycheck/attribution.py" = "9f2c10fbcb6882f49bab9333ae2162617a550136703679c36578bb82b747a359"
 ".troy-mode/checks/troycheck/classify.py" = "98e1688b6c62a5a8973711fbf0c327d35de89db41b97b1c5fbad54fb971ddde3"
