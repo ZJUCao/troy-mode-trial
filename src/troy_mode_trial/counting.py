@@ -33,7 +33,15 @@ def count_lines(path: str | os.PathLike[str]) -> int:
         UnicodeDecodeError: The file content is not valid UTF-8.
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
-    raise NotImplementedError
+    text_path = _checked_path(path)
+    if text_path == "":
+        # Path("") becomes Path("."), the current folder; an empty path names no file.
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), text_path)
+    # Default newline mode turns LF, CR LF, and a lone CR into LF, and nothing else.
+    with Path(text_path).open(encoding="utf-8-sig") as handle:
+        text = handle.read()
+    breaks = text.count("\n")
+    return breaks + (1 if text and not text.endswith("\n") else 0)
 
 
 def count_words(path: str | os.PathLike[str]) -> int:
