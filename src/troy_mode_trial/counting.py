@@ -5,6 +5,37 @@ import os
 from pathlib import Path
 
 
+def count_lines(path: str | os.PathLike[str]) -> int:
+    """Count the lines in one UTF-8 text file.
+
+    Only LF, CR LF, and a lone CR end a line. A CR directly followed by LF is
+    one line break. No other character ends a line, so the function must not
+    count with `str.splitlines()`. A last line without a line break
+    still counts. One byte order mark (U+FEFF) at the start of the file is
+    ignored.
+
+    Args:
+        path: The path of the file to count, absolute or relative to the
+            current working directory. It names one existing, readable,
+            regular file whose content is valid UTF-8. `bytes` paths are not
+            accepted.
+
+    Returns:
+        The number of lines in the file, 0 or more. A file that is empty, or
+        holds only the byte order mark, returns 0. A file that holds only one
+        line break returns 1.
+
+    Raises:
+        FileNotFoundError: No file exists at `path`, or `path` is empty.
+        IsADirectoryError: `path` names a folder (Linux).
+        PermissionError: `path` names a folder (Windows), or the process may
+            not read the file.
+        UnicodeDecodeError: The file content is not valid UTF-8.
+        TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
+    """
+    raise NotImplementedError
+
+
 def count_words(path: str | os.PathLike[str]) -> int:
     """Count the words in one UTF-8 text file.
 
