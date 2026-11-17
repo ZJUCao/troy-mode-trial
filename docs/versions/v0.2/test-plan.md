@@ -1,9 +1,9 @@
 ---
 troy-doc: "v0.2-test-plan"
 lang: "en"
-version: "0.3"
+version: "1.0"
 updated: "2026-11-17"
-status: "Draft."
+status: "Accepted by Troy on 2026-11-17"
 mirror: "test-plan.zh-CN.md"
 ---
 
@@ -76,6 +76,10 @@ Claude's scenarios run only in the release test on Troy's PC, never in CI, so th
 
 ## 5. Acceptance record
 
+| Date | Result | Troy's notes |
+| --- | --- | --- |
+| 2026-11-17 | Accepted as v0.2.0 | Troy ticked every box of the device-test checklist #62 (v0.2-S18 and "I accept v0.2.0") on commit 8505ca9. No notes. No bugs deferred. |
+
 None. Troy has not yet accepted v0.2.
 
 ## 6. Change log
@@ -85,3 +89,4 @@ None. Troy has not yet accepted v0.2.
 | 0.1 | 2026-11-08 | First draft. |
 | 0.2 | 2026-11-14 | v0.2 adds F04, the `wordcount` command. New scenarios v0.2-S10 to v0.2-S17 run the command directly and in Windows PowerShell. Section 2.1 follows F02's approved design, which fixes the name `count_lines` and accepts a `pathlib.Path`. Section 4 adds Windows PowerShell 5.1. The scenarios of F02 do not change. |
 | 0.3 | 2026-11-17 | v0.2-S11, v0.2-S12, and v0.2-S17 expect exit code 2 for a file error, as F04's design and ADR-0002 decided. New scenario v0.2-S18, which Troy runs in Windows Terminal, and a device row for it. |
+| 1.0 | 2026-11-17 | Accepted by Troy as v0.2.0. |

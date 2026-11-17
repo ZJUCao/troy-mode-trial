@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "5.0"
+version: "5.1"
 updated: "2026-11-17"
 status: "Troy 已于 2026-11-17 批准"
 mirror-of: "requirements.md"
@@ -47,9 +47,9 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | 编号 | 功能 | 硬依赖 | 软依赖 | 版本 | 状态 |
 | --- | --- | --- | --- | --- | --- |
 | F01 | Count words | 无 | 无 | v0.1 | 可在 Troy 的设备上使用 |
-| F02 | Count lines | 无 | 无 | v0.2 | 在 main 上通过测试 |
+| F02 | Count lines | 无 | 无 | v0.2 | 可在 Troy 的设备上使用 |
 | F03 | Words need a letter or digit | F01 | 无 | v0.1 | 可在 Troy 的设备上使用 |
-| F04 | Word count command | F03 | 无 | v0.2 | 在 Troy 的电脑上真跑过 |
+| F04 | Word count command | F03 | 无 | v0.2 | 可在 Troy 的设备上使用 |
 | F05 | Line count option | F02, F04 | 无 | v0.3 | 未开始 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
@@ -135,3 +135,4 @@ flowchart LR
 | 4.2 | 2026-11-17 | F02 通过验收：状态改为在 main 上通过测试。F02 是库函数，没有可以真跑的命令。 |
 | 4.3 | 2026-11-17 | 新功能 F05，Line count option：`wordcount --lines FILE` 打印一个 UTF-8 文本文件的行数，按 F02 的方式计数。F02 和 F04 已经验收，保持不变，所以 F05 是新功能，硬依赖这两个功能，排在顺序最后（F01, F03, F04, F02, F05），属于新版本 v0.3。它的原型是 `docs/prototypes/F05-line-count-option.md`。第 8 节允许 `--lines` 选项。新增问题 Q7 到 Q9。来自 Troy 的 idea #51。 |
 | 5.0 | 2026-11-17 | Troy 批准。 |
+| 5.1 | 2026-11-17 | Troy 在自己的电脑上验收了 v0.2.0：F02 和 F04 的状态改为可在 Troy 的设备上使用。 |

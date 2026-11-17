@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "5.0"
+version: "5.1"
 updated: "2026-11-17"
 status: "Approved by Troy on 2026-11-17"
 mirror: "requirements.zh-CN.md"
@@ -47,9 +47,9 @@ To count lines outside Python, Troy types `wordcount --lines FILE`. The command 
 | ID | Feature | Hard dependencies | Soft dependencies | Version | Status |
 | --- | --- | --- | --- | --- | --- |
 | F01 | Count words | None | None | v0.1 | Usable on Troy's devices |
-| F02 | Count lines | None | None | v0.2 | Passes tests on main |
+| F02 | Count lines | None | None | v0.2 | Usable on Troy's devices |
 | F03 | Words need a letter or digit | F01 | None | v0.1 | Usable on Troy's devices |
-| F04 | Word count command | F03 | None | v0.2 | Ran for real on Troy's PC |
+| F04 | Word count command | F03 | None | v0.2 | Usable on Troy's devices |
 | F05 | Line count option | F02, F04 | None | v0.3 | Not started |
 
 ### 4.1 What each feature does
@@ -133,3 +133,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 4.2 | 2026-11-17 | F02 accepted: its status is now Passes tests on main. F02 is a library function with no command of its own to run for real. |
 | 4.3 | 2026-11-17 | The new feature F05, Line count option: `wordcount --lines FILE` prints the lines of one UTF-8 text file, counted as F02 counts them. F02 and F04 are accepted and do not change, so F05 is a new feature with a hard dependency on both, last in the order (F01, F03, F04, F02, F05), in the new version v0.3. Its prototype is `docs/prototypes/F05-line-count-option.md`. Section 8 allows the `--lines` option. New questions Q7 to Q9. From Troy's idea #51. |
 | 5.0 | 2026-11-17 | Approved by Troy. |
+| 5.1 | 2026-11-17 | Troy accepted v0.2.0 on Troy's PC: F02 and F04 are now Usable on Troy's devices. |
