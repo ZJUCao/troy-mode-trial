@@ -1,9 +1,9 @@
 ---
 troy-doc: "v0.2-test-plan"
 lang: "zh-CN"
-version: "0.3"
+version: "1.0"
 updated: "2026-11-17"
-status: "草稿。"
+status: "Troy 已于 2026-11-17 验收"
 mirror-of: "test-plan.md"
 ---
 
@@ -76,6 +76,10 @@ Claude 运行的场景只在 Troy 电脑上的发布测试中运行，从不在 
 
 ## 5. 验收记录
 
+| 日期 | 结果 | Troy 的备注 |
+| --- | --- | --- |
+| 2026-11-17 | 已验收为 v0.2.0 | Troy ticked every box of the device-test checklist #62 (v0.2-S18 and "I accept v0.2.0") on commit 8505ca9. No notes. No bugs deferred. |
+
 无。Troy 尚未验收 v0.2。
 
 ## 6. 修改记录
@@ -85,3 +89,4 @@ Claude 运行的场景只在 Troy 电脑上的发布测试中运行，从不在 
 | 0.1 | 2026-11-08 | 初稿。 |
 | 0.2 | 2026-11-14 | v0.2 加入 F04，即 `wordcount` 命令。新场景 v0.2-S10 到 v0.2-S17 直接运行该命令，并在 Windows PowerShell 中运行它。第 2.1 节遵循已批准的 F02 设计，该设计定下了名字 `count_lines`，并接受 `pathlib.Path`。第 4 节加入 Windows PowerShell 5.1。F02 的场景没有改变。 |
 | 0.3 | 2026-11-17 | v0.2-S11、v0.2-S12 和 v0.2-S17 按 F04 的设计和 ADR-0002 的决定，期望文件错误的退出码为 2。新增由 Troy 在 Windows Terminal 里运行的场景 v0.2-S18，以及它的设备行。 |
+| 1.0 | 2026-11-17 | Troy 验收为 v0.2.0。 |
