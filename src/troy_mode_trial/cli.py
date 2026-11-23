@@ -46,18 +46,20 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Runs the `wordcount` command once.
 
     Reads the arguments, counts the words of the file through `count_words`,
-    or its characters through `count_chars` when the arguments hold
-    `--chars`, writes the result to standard output or an error to standard
-    error, and returns the exit code. It writes with `sys.stdout.write` and
-    `sys.stderr.write`, not with `print()`, and changes no global state.
+    its lines through `count_lines` when the arguments hold `--lines`, or its
+    characters through `count_chars` when they hold `--chars`, writes the
+    result to standard output or an error to standard error, and returns the
+    exit code. It writes with `sys.stdout.write` and `sys.stderr.write`, not
+    with `print()`, and changes no global state.
 
     Args:
         argv: The command-line arguments after the program name, for example
-            `["--chars", "notes.txt"]` or `["notes.txt"]`. `None` means
-            `sys.argv[1:]`, which is what the console script passes. The
-            option `--chars` may come before or after the file. Exactly one
-            file is expected: the path of an existing, readable UTF-8 text
-            file.
+            `["--lines", "notes.txt"]`, `["--chars", "notes.txt"]`, or
+            `["notes.txt"]`. `None` means `sys.argv[1:]`, which is what the
+            console script passes. The option `--lines` or `--chars` may come
+            before or after the file, but not both options together. Exactly
+            one file is expected: the path of an existing, readable UTF-8
+            text file.
 
     Returns:
         The exit code. `0` after the count and one line break were written to
@@ -67,8 +69,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         `cannot read file`.
 
     Raises:
-        SystemExit: With code 2 when the arguments are wrong. argparse writes
-            the usage line `usage: wordcount [--chars] FILE` and its message to
+        SystemExit: With code 2 when the arguments are wrong, for example
+            when both options are given. argparse writes the usage line
+            `usage: wordcount [--lines | --chars] FILE` and its message to
             standard error first.
 
     Any other exception, apart from `OSError` and `UnicodeDecodeError`, is a
