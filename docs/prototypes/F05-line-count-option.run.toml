@@ -1,0 +1,11 @@
+# Run file of docs/prototypes/F05-line-count-option.md (F12 design section 4).
+# Every section runs in the run's home folder, which is PowerShell's current folder.
+
+[sections."Count the lines of a file"]
+start = "empty"
+# The prose: notes.txt in the current folder is UTF-8 and holds the two lines
+# "Hello world" and "  troy-mode  trial".
+write = [{ file = '<home>\notes.txt', text = "Hello world\n  troy-mode  trial\n" }]
+
+[sections."A missing file"]
+start = "empty"
