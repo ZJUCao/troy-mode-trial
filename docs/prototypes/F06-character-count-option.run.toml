@@ -1,0 +1,17 @@
+# Run file of docs/prototypes/F06-character-count-option.md (F12 design section 4).
+# Every section runs in the run's home folder, which is PowerShell's current folder.
+
+[sections."Count the characters of a file"]
+start = "empty"
+# The prose: notes.txt in the current folder is UTF-8 and holds the two lines
+# "Hello world" and "  troy-mode  trial", each ending with a Linux line end.
+write = [{ file = '<home>\notes.txt', text = "Hello world\n  troy-mode  trial\n" }]
+
+[sections."Characters, not bytes"]
+start = "empty"
+# The prose: hello.txt in the current folder is UTF-8 and holds the one line
+# of the two characters U+4F60 U+597D, ending with a Windows line end.
+write = [{ file = '<home>\hello.txt', text = "你好\r\n" }]
+
+[sections."A missing file"]
+start = "empty"
