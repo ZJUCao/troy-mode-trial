@@ -46,15 +46,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Runs the `wordcount` command once.
 
     Reads the arguments, counts the words of the file through `count_words`,
-    writes the result to standard output or an error to standard error, and
-    returns the exit code. It writes with `sys.stdout.write` and
+    or its characters through `count_chars` when the arguments hold
+    `--chars`, writes the result to standard output or an error to standard
+    error, and returns the exit code. It writes with `sys.stdout.write` and
     `sys.stderr.write`, not with `print()`, and changes no global state.
 
     Args:
         argv: The command-line arguments after the program name, for example
-            `["notes.txt"]`. `None` means `sys.argv[1:]`, which is what the
-            console script passes. Exactly one item is expected: the path of
-            an existing, readable UTF-8 text file.
+            `["--chars", "notes.txt"]` or `["notes.txt"]`. `None` means
+            `sys.argv[1:]`, which is what the console script passes. The
+            option `--chars` may come before or after the file. Exactly one
+            file is expected: the path of an existing, readable UTF-8 text
+            file.
 
     Returns:
         The exit code. `0` after the count and one line break were written to
@@ -65,7 +68,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     Raises:
         SystemExit: With code 2 when the arguments are wrong. argparse writes
-            the usage line `usage: wordcount FILE` and its message to
+            the usage line `usage: wordcount [--chars] FILE` and its message to
             standard error first.
 
     Any other exception, apart from `OSError` and `UnicodeDecodeError`, is a
