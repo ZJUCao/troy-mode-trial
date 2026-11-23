@@ -14,8 +14,6 @@ def count_chars(path: str | os.PathLike[str]) -> int:
     them: LF is one character, CR is one, and CR LF is two. A U+FEFF anywhere
     else counts as one character.
 
-    The mock raises ``NotImplementedError``.
-
     Args:
         path: The path of the file to count, absolute or relative to the
             current working directory. It names one existing, readable,
@@ -34,7 +32,13 @@ def count_chars(path: str | os.PathLike[str]) -> int:
         UnicodeDecodeError: Any byte of the file is not valid UTF-8.
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
-    raise NotImplementedError
+    text_path = _checked_path(path)
+    if text_path == "":
+        # Path("") becomes Path("."), the current folder; an empty path names no file.
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), text_path)
+    # newline="" turns line-end translation off, so CR LF stays two characters.
+    with Path(text_path).open(encoding="utf-8-sig", newline="") as handle:
+        return len(handle.read())
 
 
 def count_lines(path: str | os.PathLike[str]) -> int:
