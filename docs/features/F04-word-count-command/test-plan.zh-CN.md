@@ -1,8 +1,8 @@
 ---
 troy-doc: "F04-test-plan"
 lang: "zh-CN"
-version: "1.0"
-updated: "2026-11-15"
+version: "1.1"
+updated: "2026-11-23"
 status: "Troy 已于 2026-11-15 批准"
 mirror-of: "test-plan.md"
 ---
@@ -23,7 +23,7 @@ F04 有两个外部接口，用例按各自调用方的方式调用它们。
 
 每个测试在 `tmp_path` 里自建文件，并以二进制方式写入用例给出的确切字节。用例未另作说明时，`notes.txt` 内容为 `Hello world\n  troy-mode  trial`，末尾没有换行符，即设计中的示例，共 4 个词。`latin1.txt` 内容为 Latin-1 编码的 `café au lait\n`，其字节以 `63 61 66 E9 20` 开头。`sub` 是 `tmp_path` 中的一个空文件夹。文件内容或文件名中的非 ASCII 字符用 UTF-8。测试套件在 Windows 11 和 Linux 上运行。用例未指明系统时，在两个系统上预期相同的结果。
 
-“恰好是”指完整的文字：例如，标准错误恰好是 `wordcount: missing.txt: no such file\n`，指只有这一行，别无其他。“用法错误”指：`main` 抛出 `code` 为 `2` 的 `SystemExit`，或程序以退出码 2 退出，且标准输出为空，标准错误恰好有两行，第一行恰好是 `usage: wordcount FILE`，第二行以 `wordcount: error: ` 开头。
+“恰好是”指完整的文字：例如，标准错误恰好是 `wordcount: missing.txt: no such file\n`，指只有这一行，别无其他。“用法错误”指：`main` 抛出 `code` 为 `2` 的 `SystemExit`，或程序以退出码 2 退出，且标准输出为空，标准错误恰好有两行，第一行以 `usage: wordcount ` 开头，第二行以 `wordcount: error: ` 开头。用例不固定用法行的其余部分，因为后来的功能会把各自的选项加进去：F06 加入 `--chars`，F05 加入 `--lines`。这些功能的方案各自逐字检查自己的用法行。
 
 在模拟实现上，每个用例都因命令尚未实现而失败。这里假定模拟的 `main` 抛出 `NotImplementedError`，并且模拟 PR 已在 `[project.scripts]` 中声明 `wordcount = "troy_mode_trial.cli:main"`，使 CI 的安装生成该程序。于是每个 `main` 用例得到 `NotImplementedError` 而不是其结果，每个 `wordcount` 用例得到退出码 1 和回溯信息而不是其输出（R09）。如果模拟 PR 没有声明该程序，`wordcount` 用例会因程序不存在而失败，R09 不接受这种失败，所以测试工程师在测试 PR 之前报告此事。
 
@@ -41,7 +41,7 @@ F04 有两个外部接口，用例按各自调用方的方式调用它们。
 | F04-T10 | 单元 | `main` | 打开文件时的其他任何错误都得到原因 `cannot read file`。 | 由 300 个 `a` 后接 `.txt` 组成的文件名，超过两个系统对单个名称允许的长度。仅在 Windows 上另加 `a?b.txt`，这是 Windows 不允许的名称。对每个名称各调用一次 `main`。 | 每次都返回 `2`，标准输出为空。标准错误恰好是 `wordcount: <name>: cannot read file\n`，其中 `<name>` 是传入的参数原样。 |
 | F04-T11 | 功能 | `main` | 设计中缺少参数的示例。 | `main([])`。 | 用法错误。标准错误的第二行恰好是 `wordcount: error: the following arguments are required: FILE`。 |
 | F04-T12 | 单元 | `main` | 其他每种错误的命令行都是用法错误，而不是计数、文件错误或帮助文字。 | `notes.txt` 存在，`missing.txt` 和 `other.txt` 不存在。六次调用：`main(["notes.txt", "notes.txt"])`、`main(["missing.txt", "other.txt"])`、`main(["-h"])`、`main(["--help"])`、`main(["-x", "notes.txt"])` 和 `main(["--"])`。 | 每次都是用法错误。第一次调用时，标准错误的第二行恰好是 `wordcount: error: unrecognized arguments: notes.txt`。没有一次调用写出帮助文字或 `wordcount: <FILE>: <reason>` 这样的行。 |
-| F04-T13 | 单元 | `main` | 不论 `sys.argv[0]` 是什么，每条消息中的程序名都是 `wordcount`。 | `monkeypatch.setattr(sys, "argv", ["other-name.py"])`。先调用 `main([])`，再调用 `main(["missing.txt"])`。 | 第一次是用法错误，第一行恰好是 `usage: wordcount FILE`。第二次返回 `2`，向标准错误恰好写入 `wordcount: missing.txt: no such file\n`。 |
+| F04-T13 | 单元 | `main` | 不论 `sys.argv[0]` 是什么，每条消息中的程序名都是 `wordcount`。 | `monkeypatch.setattr(sys, "argv", ["other-name.py"])`。先调用 `main([])`，再调用 `main(["missing.txt"])`。 | 第一次是用法错误，所以第一行以 `usage: wordcount ` 开头。第二次返回 `2`，向标准错误恰好写入 `wordcount: missing.txt: no such file\n`。 |
 | F04-T14 | 单元 | `main` | 不传参数时，`main` 读取 `sys.argv[1:]`，与控制台脚本的做法相同。 | `monkeypatch.setattr(sys, "argv", ["wordcount", "notes.txt"])`。调用 `main()`，也调用 `main(None)`。 | 每次都返回 `0`，向标准输出恰好写入 `4\n`。 |
 | F04-T15 | 单元 | `main` | `argv` 可以是任何 `str` 序列，不只是列表。 | `main(("notes.txt",))`，即一个元组。 | 返回 `0`，向标准输出恰好写入 `4\n`。 |
 | F04-T16 | 单元 | `main` | `main` 在两次调用之间不保留状态，也不写任何文件。 | `notes.txt` 和 `latin1.txt` 存在。记下 `tmp_path` 中每个文件的名称和字节、工作目录以及 `sys.argv`。在同一进程中依次用 `["notes.txt"]`、`["missing.txt"]`、`["latin1.txt"]` 和 `["notes.txt"]` 调用 `main`，每次调用后读取输出。 | 各次调用依次返回 `0`、`2`、`2` 和 `0`。每次调用的输出只有它自己的：`4\n`；`wordcount: missing.txt: no such file\n`；`wordcount: latin1.txt: not valid UTF-8\n`；`4\n`。之后 `tmp_path` 中的文件和字节不变，工作目录和 `sys.argv` 也不变。 |
@@ -67,6 +67,7 @@ F04 有两个外部接口，用例按各自调用方的方式调用它们。
 | `argv` 中不是 `str` 的元素，以及含字符 U+0000 的路径。 | 设计 2.2 只允许 `str` 元素，其他类型不在约定之内。任何 shell 都无法在参数中传入 U+0000，所以 `wordcount` 永远收不到它。 |
 | Windows 上 `wordcount` 向管道写出时，标准错误中非 ASCII 文件名的字节。 | 这时 Python 按系统代码页编码标准错误，字节因机器而异。F04-T06 通过 `main` 检查这类消息的文字，F04-T22 检查这类文件名能到达程序并被统计。 |
 | PowerShell 找到 `wordcount`、`$LASTEXITCODE`、PowerShell 去掉引号的方式，以及 F04 合入后需要重新安装项目。 | CI 在 Linux 上运行，没有 PowerShell。v0.2 版本测试方案在 Troy 的电脑上用 Windows PowerShell 运行该命令。F04-T22 检查带引号的参数作为一个参数到达程序。 |
+| 用法行中 `usage: wordcount ` 之后的部分，例如 F04 自己的 `usage: wordcount FILE`。 | 后来的功能会把各自的选项加进用法行，而 F04 是已验收的功能，它的每个测试在那些功能的 PR 中都必须通过（R10）。F06 和 F05 的方案各自检查它们显示的完整用法行。 |
 | 性能。 | 没有性能指标（R14）。 |
 
 ## 5. 与接口设计师的对齐记录
@@ -79,3 +80,4 @@ F04 有两个外部接口，用例按各自调用方的方式调用它们。
 | --- | --- | --- |
 | 0.1 | 2026-11-15 | 初稿。 |
 | 1.0 | 2026-11-15 | Troy 批准。 |
+| 1.1 | 2026-11-23 | F06 和 F05 给命令加入选项，用法行也随之改变（F06 设计第 3 节）。用法错误的第一行现在只要求以 `usage: wordcount ` 开头，而不再恰好是 `usage: wordcount FILE`。这放宽了 F04-T11、F04-T12、F04-T13 和 F04-T21：它们仍检查退出码 2、空的标准输出、程序名和错误行，其余内容不变。它们在 F06 和 F05 的代码合入前后都能通过。 |

@@ -1,8 +1,8 @@
 ---
 troy-doc: "F04-test-plan"
 lang: "en"
-version: "1.0"
-updated: "2026-11-15"
+version: "1.1"
+updated: "2026-11-23"
 status: "Approved by Troy on 2026-11-15"
 mirror: "test-plan.zh-CN.md"
 ---
@@ -23,7 +23,7 @@ F04 has two external interfaces, and the cases reach each one the way its caller
 
 Each test makes its own files in `tmp_path` and writes them in binary mode, as the exact bytes the case gives. Unless a case says otherwise, `notes.txt` holds `Hello world\n  troy-mode  trial` with no line break at the end, the design's example, which has 4 words. `latin1.txt` holds `café au lait\n` in Latin-1, so its bytes start `63 61 66 E9 20`. `sub` is an empty folder in `tmp_path`. Characters outside ASCII in a file's content or name are UTF-8. The suite runs on Windows 11 and on Linux. A case expects the same result on both, unless it names a system.
 
-"Exactly" means the whole text: for example, standard error is exactly `wordcount: missing.txt: no such file\n` means that line and nothing else. "Usage error" means: `main` raises `SystemExit` whose `code` is `2`, or the program exits with code 2, and standard output is empty, and standard error holds exactly two lines, the first exactly `usage: wordcount FILE` and the second starting with `wordcount: error: `.
+"Exactly" means the whole text: for example, standard error is exactly `wordcount: missing.txt: no such file\n` means that line and nothing else. "Usage error" means: `main` raises `SystemExit` whose `code` is `2`, or the program exits with code 2, and standard output is empty, and standard error holds exactly two lines, the first starting with `usage: wordcount ` and the second starting with `wordcount: error: `. The cases do not fix the rest of the usage line, because later features add their options to it: F06 adds `--chars`, and F05 adds `--lines`. Each of those features' plans checks its own usage line word for word.
 
 Against the mock, every case fails because the command is not implemented. This assumes that the mock `main` raises `NotImplementedError`, and that the mock PR already declares `wordcount = "troy_mode_trial.cli:main"` in `[project.scripts]`, so that CI's install makes the program. Then each `main` case gets `NotImplementedError` instead of its result, and each `wordcount` case gets exit code 1 and a traceback instead of its output (R09). If the mock PR does not declare the program, the `wordcount` cases would fail because the program is missing, which R09 does not accept, so the Test Engineer reports it before the test PR.
 
@@ -41,7 +41,7 @@ Against the mock, every case fails because the command is not implemented. This 
 | F04-T10 | unit | `main` | Any other error while the file is opened gets the reason `cannot read file`. | A name of 300 `a` followed by `.txt`, longer than either system allows for one name. On Windows only, also `a?b.txt`, a name that Windows does not allow. Call `main` once for each name. | Each returns `2` and leaves standard output empty. Standard error is exactly `wordcount: <name>: cannot read file\n`, where `<name>` is the argument as given. |
 | F04-T11 | functional | `main` | The design's example of a missing argument. | `main([])`. | A usage error. The second line of standard error is exactly `wordcount: error: the following arguments are required: FILE`. |
 | F04-T12 | unit | `main` | Every other wrong command line is a usage error, not a count, a file error, or a help text. | `notes.txt` exists, `missing.txt` and `other.txt` do not. Six calls: `main(["notes.txt", "notes.txt"])`, `main(["missing.txt", "other.txt"])`, `main(["-h"])`, `main(["--help"])`, `main(["-x", "notes.txt"])`, and `main(["--"])`. | Each is a usage error. For the first call, the second line of standard error is exactly `wordcount: error: unrecognized arguments: notes.txt`. No call writes a help text or a line `wordcount: <FILE>: <reason>`. |
-| F04-T13 | unit | `main` | The program name in every message is `wordcount`, whatever `sys.argv[0]` holds. | `monkeypatch.setattr(sys, "argv", ["other-name.py"])`. Call `main([])`, then `main(["missing.txt"])`. | The first is a usage error whose first line is exactly `usage: wordcount FILE`. The second returns `2` and writes exactly `wordcount: missing.txt: no such file\n` to standard error. |
+| F04-T13 | unit | `main` | The program name in every message is `wordcount`, whatever `sys.argv[0]` holds. | `monkeypatch.setattr(sys, "argv", ["other-name.py"])`. Call `main([])`, then `main(["missing.txt"])`. | The first is a usage error, so its first line starts with `usage: wordcount `. The second returns `2` and writes exactly `wordcount: missing.txt: no such file\n` to standard error. |
 | F04-T14 | unit | `main` | With no argument, `main` reads `sys.argv[1:]`, as the console script does. | `monkeypatch.setattr(sys, "argv", ["wordcount", "notes.txt"])`. Call `main()`, and also `main(None)`. | Each returns `0` and writes exactly `4\n` to standard output. |
 | F04-T15 | unit | `main` | `argv` may be any sequence of `str`, not only a list. | `main(("notes.txt",))`, a tuple. | Returns `0` and writes exactly `4\n` to standard output. |
 | F04-T16 | unit | `main` | `main` keeps no state between calls, and writes no file. | `notes.txt` and `latin1.txt` exist. Record the names and bytes of every file in `tmp_path`, the working directory, and `sys.argv`. In one process, call `main` with `["notes.txt"]`, `["missing.txt"]`, `["latin1.txt"]`, and `["notes.txt"]`, and read the output after each call. | The calls return `0`, `2`, `2`, and `0`. Each call's output is only its own: `4\n`; `wordcount: missing.txt: no such file\n`; `wordcount: latin1.txt: not valid UTF-8\n`; and `4\n`. Afterward, `tmp_path` holds the same files with the same bytes, and the working directory and `sys.argv` are unchanged. |
@@ -67,6 +67,7 @@ None. Design 2.1 and 2.2 set no performance target, and requirements 7.1 sets no
 | Items of `argv` that are not `str`, and a path that holds the character U+0000. | Design 2.2 allows only `str` items, so other types are outside the contract. No shell can pass U+0000 in an argument, so `wordcount` never receives one. |
 | The bytes of a file name outside ASCII on standard error when `wordcount` writes to a pipe on Windows. | Python then encodes standard error in the system's code page, so the bytes depend on the machine. F04-T06 checks the text of such a message through `main`, and F04-T22 checks that such a name reaches the program and is counted. |
 | PowerShell finding `wordcount`, `$LASTEXITCODE`, quotes as PowerShell removes them, and the need to install the project again once F04 lands. | CI runs on Linux, without PowerShell. The v0.2 version test plan runs the command in Windows PowerShell on Troy's PC. F04-T22 checks that a quoted argument reaches the program as one argument. |
+| The usage line after `usage: wordcount `, such as F04's own `usage: wordcount FILE`. | Later features add their options to the usage line, and every test of F04, an accepted feature, must pass in their PRs (R10). The plans of F06 and F05 check the full usage line that each of them shows. |
 | Performance. | No performance target exists (R14). |
 
 ## 5. Alignment with the Interface Designer
@@ -79,3 +80,4 @@ None. The design answered every question this plan raised. The Architect's notes
 | --- | --- | --- |
 | 0.1 | 2026-11-15 | First draft. |
 | 1.0 | 2026-11-15 | Approved by Troy. |
+| 1.1 | 2026-11-23 | F06 and F05 add options to the command, and with them to the usage line (F06 design section 3). A usage error's first line now only starts with `usage: wordcount `, instead of being exactly `usage: wordcount FILE`. This loosens F04-T11, F04-T12, F04-T13, and F04-T21, which still check exit code 2, empty standard output, the program name, and the error line, and changes nothing else in them. They pass before and after the code of F06 and of F05. |
