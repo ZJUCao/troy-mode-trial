@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "6.0"
+version: "6.1"
 updated: "2026-11-23"
 status: "Troy 已于 2026-11-23 批准"
 mirror-of: "requirements.md"
@@ -54,7 +54,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F03 | Words need a letter or digit | F01 | 无 | v0.1 | 可在 Troy 的设备上使用 |
 | F04 | Word count command | F03 | 无 | v0.2 | 可在 Troy 的设备上使用 |
 | F05 | Line count option | F02, F04 | 无 | v0.3 | 未开始 |
-| F06 | Character count option | F04 | 无 | v0.3 | 未开始 |
+| F06 | Character count option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -148,3 +148,4 @@ flowchart LR
 | 5.1 | 2026-11-17 | Troy 在自己的电脑上验收了 v0.2.0：F02 和 F04 的状态改为可在 Troy 的设备上使用。 |
 | 5.2 | 2026-11-23 | 新功能 F06，Character count option：`wordcount --chars FILE` 打印一个 UTF-8 文本文件的字符数，即解码后的文本，换行符也算。F04 已经验收，保持不变，所以 F06 是新功能，只硬依赖 F04，在顺序里紧跟 F04（F01, F03, F04, F06, F02, F05），与 F05 同属 v0.3。它的原型是 `docs/prototypes/F06-character-count-option.md`。第 8 节允许 `--chars` 选项。新增问题 Q10 到 Q13。F01 到 F05 不变。 |
 | 6.0 | 2026-11-23 | Troy 批准。 |
+| 6.1 | 2026-11-23 | F06 通过验收：状态改为在 Troy 的电脑上真跑过。 |
