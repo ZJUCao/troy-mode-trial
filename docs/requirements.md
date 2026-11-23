@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "6.1"
+version: "6.2"
 updated: "2026-11-23"
 status: "Approved by Troy on 2026-11-23"
 mirror: "requirements.zh-CN.md"
@@ -53,7 +53,7 @@ To count characters outside Python, Troy types `wordcount --chars FILE`. The com
 | F02 | Count lines | None | None | v0.2 | Usable on Troy's devices |
 | F03 | Words need a letter or digit | F01 | None | v0.1 | Usable on Troy's devices |
 | F04 | Word count command | F03 | None | v0.2 | Usable on Troy's devices |
-| F05 | Line count option | F02, F04 | None | v0.3 | Not started |
+| F05 | Line count option | F02, F04 | None | v0.3 | Ran for real on Troy's PC |
 | F06 | Character count option | F04 | None | v0.3 | Ran for real on Troy's PC |
 
 ### 4.1 What each feature does
@@ -147,3 +147,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 5.2 | 2026-11-23 | The new feature F06, Character count option: `wordcount --chars FILE` prints the characters of one UTF-8 text file, its decoded text with line ends included. F04 is accepted and does not change, so F06 is a new feature with a hard dependency on F04 only, right after F04 in the order (F01, F03, F04, F06, F02, F05), in v0.3 beside F05. Its prototype is `docs/prototypes/F06-character-count-option.md`. Section 8 allows the `--chars` option. New questions Q10 to Q13. F01 to F05 do not change. |
 | 6.0 | 2026-11-23 | Approved by Troy. |
 | 6.1 | 2026-11-23 | F06 accepted: its status is now Ran for real on Troy's PC. |
+| 6.2 | 2026-11-23 | F05 accepted: its status is now Ran for real on Troy's PC. |
