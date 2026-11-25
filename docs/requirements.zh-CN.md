@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "6.2"
-updated: "2026-11-23"
-status: "Troy 已于 2026-11-23 批准"
+version: "7.0"
+updated: "2026-11-25"
+status: "Troy 已于 2026-11-25 批准"
 mirror-of: "requirements.md"
 ---
 
@@ -11,7 +11,7 @@ mirror-of: "requirements.md"
 
 ## 1. 目标
 
-troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里的内容。Troy 在自己的脚本里调用它，也在 PowerShell 里运行它的 `wordcount` 命令。0.1 版统计一个文件的词数，0.2 版加上 `wordcount` 命令，并统计一个文件的行数。0.3 版加上 `--lines` 和 `--chars` 选项，让 `wordcount` 也能打印一个文件的行数或字符数。
+troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里的内容。Troy 在自己的脚本里调用它，也在 PowerShell 里运行它的 `wordcount` 命令。0.1 版统计一个文件的词数，0.2 版加上 `wordcount` 命令，并统计一个文件的行数。0.3 版加上 `--lines`、`--chars` 和 `--longest` 选项，让 `wordcount` 也能打印一个文件的行数、字符数，或其中最长的词的长度。
 
 ## 2. 用户
 
@@ -19,7 +19,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 
 ## 3. 用户如何使用
 
-这个库提供函数，以及一个命令行程序 `wordcount`（F04，以及 F05 的 `--lines` 选项和 F06 的 `--chars` 选项）。
+这个库提供函数，以及一个命令行程序 `wordcount`（F04，以及 F05 的 `--lines` 选项、F06 的 `--chars` 选项和 F07 的 `--longest` 选项）。
 
 1. Troy 在 Python 脚本或会话里导入 `troy_mode_trial`。
 2. Troy 调用一个计数函数，传入一个 UTF-8 文本文件的路径。
@@ -34,6 +34,8 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 
 要在 Python 之外统计字符数，Troy 输入 `wordcount --chars FILE`。命令打印文件解码后的文本里的字符数（换行符也算），而不是词数。文件出错时，错误信息和退出码与 `wordcount FILE` 相同。
 
+要在 Python 之外找出最长的词有多长，Troy 输入 `wordcount --longest FILE`。命令打印文件里最长的词的长度（按字符计），词按 F03 的方式划分，而不是词数。文件里没有词时打印 0。文件出错时，错误信息和退出码与 `wordcount FILE` 相同。
+
 ### 3.1 原型
 
 | 原型 | 功能 | 文件 |
@@ -44,6 +46,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | 在 PowerShell 里统计词数 | F04 | `docs/prototypes/F04-word-count-command.md` |
 | 在 PowerShell 里统计行数 | F05 | `docs/prototypes/F05-line-count-option.md` |
 | 在 PowerShell 里统计字符数 | F06 | `docs/prototypes/F06-character-count-option.md` |
+| 在 PowerShell 里找出最长的词 | F07 | `docs/prototypes/F07-longest-word-option.md` |
 
 ## 4. 功能点
 
@@ -55,6 +58,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F04 | Word count command | F03 | 无 | v0.2 | 可在 Troy 的设备上使用 |
 | F05 | Line count option | F02, F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 | F06 | Character count option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
+| F07 | Longest word option | F04 | 无 | v0.3 | 未开始 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -66,10 +70,11 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 - **F04 Word count command（词数命令）。** 给 Troy 一个在 PowerShell 里使用的 `wordcount FILE` 命令。它打印一个 UTF-8 文本文件里的词数，按 F03 的方式计数，让 Troy 在 Python 之外也能统计词数。文件不存在时，它打印一条写明文件名的错误，退出码不为 0。
 - **F05 Line count option（行数选项）。** 给 `wordcount` 加上 `--lines` 选项：`wordcount --lines FILE` 打印一个 UTF-8 文本文件里的行数，按 F02 的方式计数，而不是词数。不带选项的 `wordcount FILE` 仍然打印词数。文件不存在时，错误和退出码与 `wordcount FILE` 相同。
 - **F06 Character count option（字符数选项）。** 给 `wordcount` 加上 `--chars` 选项：`wordcount --chars FILE` 打印一个 UTF-8 文本文件的字符数，而不是词数。它统计文件解码后的文本里的字符，换行符也算：一个字符是一个 Unicode 码位，所以 `你` 是一个字符，不是三个字节；Windows 的换行 `\r\n` 是两个字符。文件开头的字节顺序标记不算（Q12）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。
+- **F07 Longest word option（最长词选项）。** 给 `wordcount` 加上 `--longest` 选项：`wordcount --longest FILE` 打印一个 UTF-8 文本文件里最长的词的长度（按字符计），而不是词数。词就是 F03 算作词的东西，即整串连续的非空白字符，所以 `don't,` 长 6 个字符（Q15）。一个字符是一个 Unicode 码位，与 `--chars` 一样，所以 `世界!` 长 3 个字符。没有词的文件，例如空文件或只有 `--` 和 `...` 的文件，打印 0。文件开头的字节顺序标记不算词的一部分（Q5）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。
 
 ## 5. 依赖图和顺序
 
-F03 修改 F01 对词的定义，所以 F03 硬依赖 F01。F04 按 F03 的方式计数，所以 F04 硬依赖 F03。F02 不依赖其他功能。F05 给 F04 的命令加选项，并按 F02 的方式数行，所以 F05 硬依赖 F02 和 F04。F06 给 F04 的命令加选项，不需要其他功能，所以 F06 只硬依赖 F04。F05 和 F06 互不依赖，可以同时开发。
+F03 修改 F01 对词的定义，所以 F03 硬依赖 F01。F04 按 F03 的方式计数，所以 F04 硬依赖 F03。F02 不依赖其他功能。F05 给 F04 的命令加选项，并按 F02 的方式数行，所以 F05 硬依赖 F02 和 F04。F06 给 F04 的命令加选项，不需要其他功能，所以 F06 只硬依赖 F04。F07 给 F04 的命令加选项，并按 F04 的方式划分词，所以 F07 只硬依赖 F04。F05、F06 和 F07 互不依赖。
 
 ```mermaid
 flowchart LR
@@ -78,9 +83,10 @@ flowchart LR
   F04 --> F05
   F02 --> F05
   F04 --> F06
+  F04 --> F07
 ```
 
-拓扑顺序：F01, F03, F04, F06, F02, F05
+拓扑顺序：F01, F03, F04, F07, F06, F02, F05
 
 ## 6. 版本计划
 
@@ -88,7 +94,7 @@ flowchart LR
 | --- | --- | --- |
 | v0.1 | F01, F03 | Troy 的脚本可以统计一个 UTF-8 文本文件的词数，其中每个词至少含一个字母或数字。 |
 | v0.2 | F04, F02 | Troy 可以在 PowerShell 里用 `wordcount` 命令统计一个 UTF-8 文本文件的词数，Troy 的脚本还可以统计一个 UTF-8 文本文件的行数。 |
-| v0.3 | F05, F06 | Troy 可以在 PowerShell 里用 `wordcount --lines` 统计一个 UTF-8 文本文件的行数，用 `wordcount --chars` 统计它的字符数。 |
+| v0.3 | F05, F06, F07 | Troy 可以在 PowerShell 里用 `wordcount --lines` 统计一个 UTF-8 文本文件的行数，用 `wordcount --chars` 统计它的字符数，用 `wordcount --longest` 找出它最长的词有多长。 |
 
 ## 7. 非功能需求
 
@@ -106,7 +112,7 @@ flowchart LR
 
 - UTF-8 以外的编码。
 - 统计一个文件夹里的文件，或一次调用统计多个文件。
-- `wordcount` 以外的命令行程序，`--lines` 和 `--chars` 以外的任何 `wordcount` 选项，一条命令里同时用两个计数选项，以及第二个文件参数。
+- `wordcount` 以外的命令行程序，`--lines`、`--chars` 和 `--longest` 以外的任何 `wordcount` 选项，一条命令里同时用其中两个选项，打印最长的词本身，以及第二个文件参数。
 
 ## 9. 待定问题
 
@@ -127,6 +133,9 @@ flowchart LR
 | Q11 | Windows 的换行 `\r\n` 算几个字符？ | 两个，按文件里的原样计算。`wordcount --chars` 按解码后的文本原样计数，不转换换行符，所以同一个文件在 Windows 和 Linux 上计数相同。 | Troy 于 2026-11-23 决定：按提议（“全按推荐”）。 |
 | Q12 | 文件开头的字节顺序标记算不算一个字符？ | 不算，与统计词数时一样（Q5）。 | Troy 于 2026-11-23 决定：按提议（“全按推荐”）。 |
 | Q13 | `wordcount --lines --chars FILE` 会怎样？ | 用法错误，退出码 2，与其他错误的命令行一样：一条命令只打印一个计数。 | Troy 于 2026-11-23 决定：按提议（“全按推荐”）。 |
+| Q14 | F07 的选项要不要再加一个短写法，例如 `-L`？ | 不要。只有 `--longest`，与 `--lines` 和 `--chars` 一样（Q7、Q10）。 | Troy 于 2026-11-25 决定：按提议（“全按推荐”）。 |
+| Q15 | 紧贴在词上的标点算不算词的长度，例如 `don't,` 里的逗号？ | 算。词就是 F03 数的整串字符，这样 `wordcount --longest` 和 `wordcount` 对“词”的理解一致。 | Troy 于 2026-11-25 决定：按提议（“全按推荐”）。 |
+| Q16 | `wordcount --longest` 和 `--lines` 或 `--chars` 一起用会怎样？ | 用法错误，退出码 2，与 `--lines --chars` 一样（Q13）。 | Troy 于 2026-11-25 决定：按提议（“全按推荐”）。 |
 
 ## 10. 修改记录
 
@@ -150,3 +159,5 @@ flowchart LR
 | 6.0 | 2026-11-23 | Troy 批准。 |
 | 6.1 | 2026-11-23 | F06 通过验收：状态改为在 Troy 的电脑上真跑过。 |
 | 6.2 | 2026-11-23 | F05 通过验收：状态改为在 Troy 的电脑上真跑过。 |
+| 6.3 | 2026-11-25 | 新功能 F07，Longest word option：`wordcount --longest FILE` 打印一个 UTF-8 文本文件里最长的词的长度（按字符计），词按 F03 的方式划分，没有词的文件打印 0。F04 已经验收，保持不变，所以 F07 是新功能，只硬依赖 F04，在顺序里紧跟 F04（F01, F03, F04, F07, F06, F02, F05），与 F05 和 F06 同属 v0.3。它的原型是 `docs/prototypes/F07-longest-word-option.md`。第 8 节允许 `--longest` 选项。新增问题 Q14 到 Q16。F01 到 F06 不变。 |
+| 7.0 | 2026-11-25 | Troy 批准。 |
