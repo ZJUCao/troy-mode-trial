@@ -1,0 +1,23 @@
+# Run file of docs/prototypes/F07-longest-word-option.md (F12 design section 4).
+# Every section runs in the run's home folder, which is PowerShell's current folder.
+
+[sections."Find the longest word of a file"]
+start = "empty"
+# The prose: notes.txt in the current folder is UTF-8 and holds the two lines
+# "Hello world" and "  troy-mode  trial", each ending with a Linux line end.
+write = [{ file = '<home>\notes.txt', text = "Hello world\n  troy-mode  trial\n" }]
+
+[sections."Characters, and the whole word"]
+start = "empty"
+# The prose: greeting.txt in the current folder is UTF-8 and holds the one line
+# of "你好 世界!", ending with a Windows line end.
+write = [{ file = '<home>\greeting.txt', text = "你好 世界!\r\n" }]
+
+[sections."A file with no word"]
+start = "empty"
+# The prose: dashes.txt in the current folder is UTF-8 and holds the one line
+# "-- ...". The prose names no line end; a Linux line end is used.
+write = [{ file = '<home>\dashes.txt', text = "-- ...\n" }]
+
+[sections."A missing file"]
+start = "empty"
