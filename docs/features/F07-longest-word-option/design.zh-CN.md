@@ -1,7 +1,7 @@
 ---
 troy-doc: "F07-design"
 lang: "zh-CN"
-version: "1.0"
+version: "1.1"
 updated: "2026-11-25"
 status: "Troy 已于 2026-11-25 批准"
 mirror-of: "design.md"
@@ -18,7 +18,7 @@ mirror-of: "design.md"
 
 ## 2. 接口
 
-F07 修改模块 cli 中 F04 的两个接口，并在模块 counting 中新增一个接口，做法与 F06 相同。2.1 节是 Troy 输入的命令，它新增选项 `--longest`。2.2 节是命令背后的函数。2.3 节是新的库函数 `longest_word_length`，它找出一个文件中最长词的长度，`main` 在遇到 `--longest` 时调用它。
+F07 修改模块 cli 中 F04 的两个接口，并在模块 counting 中新增一个接口，做法与 F06 相同。2.1 节是 Troy 输入的命令，它新增选项 `--longest`。2.2 节是命令背后的函数。2.3 节是新的库函数 `count_longest`，它找出一个文件中最长词的长度，`main` 在遇到 `--longest` 时调用它。
 
 找最长词的工作放在 counting 中，而不是 cli 中，理由与 F06 设计第 2 节为 `count_chars` 给出的理由相同。架构第 3 节说 cli 读取参数并调用 counting。counting 已经实现了 `--longest` 必须与 `wordcount FILE` 一致的规则：什么是词（F03），跳过文件开头的一个字节顺序标记（需求 Q5），文件不存在或不是合法 UTF-8 时抛出 Python 自己的异常（Q4）。把词的规则放在一个模块里，`wordcount FILE` 和 `wordcount --longest FILE` 对“什么是词”就不会有分歧（Q15）。需求 Q6 已经确定统计行数放进 counting 不需要修改架构，度量词的长度同样如此。
 
@@ -52,7 +52,7 @@ usage: wordcount [--lines | --chars | --longest] FILE
 
 - 返回值：成功时退出码 0。标准输出是一个十进制数，不带符号、填充或分隔符，后跟一个换行符；标准错误为空，与 F04 设计 2.1 节相同。
   - 不加计数选项时，这个数是 `count_words(FILE)` 的返回值，与 F04 相同。
-  - 加 `--longest` 时，这个数是 `longest_word_length(FILE)` 的返回值（2.3 节）：按 F03 的方式划分词，最长词的长度，以 Unicode 码位计；文件中没有词时为 0。词是整段非空白字符，包括标点，所以 `don't,` 是 6（需求 Q15）。`世界!` 是 3，虽然它占 7 个字节。网址或 `x--y` 这样的一段都是一个词，所以这样的一段常常就是最长的。行尾是空白，所以同一个文件在 Windows 和 Linux 上保存，得到的数相同。
+  - 加 `--longest` 时，这个数是 `count_longest(FILE)` 的返回值（2.3 节）：按 F03 的方式划分词，最长词的长度，以 Unicode 码位计；文件中没有词时为 0。词是整段非空白字符，包括标点，所以 `don't,` 是 6（需求 Q15）。`世界!` 是 3，虽然它占 7 个字节。网址或 `x--y` 这样的一段都是一个词，所以这样的一段常常就是最长的。行尾是空白，所以同一个文件在 Windows 和 Linux 上保存，得到的数相同。
   - 加 `--lines` 或 `--chars` 时，这个数按 F05 或 F06 的设计。
 
 错误：
@@ -112,7 +112,7 @@ PS> $LASTEXITCODE
 ### 2.2 `main`
 
 - 模块：cli，位于 `src/troy_mode_trial/cli.py`，与 F04 设计 2.2 节相同。测试以 `from troy_mode_trial.cli import main` 导入它。
-- 功能：运行一次 2.1 节的 `wordcount` 命令：读取参数，通过 `count_words` 得到这个数，加 `--lines` 时通过 `count_lines`，加 `--chars` 时通过 `count_chars`，加 `--longest` 时通过 `longest_word_length`；写出结果或错误，并返回退出码。它从包 `troy_mode_trial` 导入这四个函数，从不从 `troy_mode_trial.counting` 导入（架构第 4 节）。
+- 功能：运行一次 2.1 节的 `wordcount` 命令：读取参数，通过 `count_words` 得到这个数，加 `--lines` 时通过 `count_lines`，加 `--chars` 时通过 `count_chars`，加 `--longest` 时通过 `count_longest`；写出结果或错误，并返回退出码。它从包 `troy_mode_trial` 导入这四个函数，从不从 `troy_mode_trial.counting` 导入（架构第 4 节）。
 
 签名：
 
@@ -135,7 +135,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 | 错误 | 何时发生 |
 | --- | --- |
 | 代码为 2 的 `SystemExit` | 参数错误，见 2.1 节“错误”表中的两个用法行，包括 `--longest` 与 `--lines` 或 `--chars` 同时出现。argparse 把用法行和它的消息写到标准错误，并抛出 `SystemExit(2)`，所以 `main` 不返回。 |
-| 其他任何异常 | 缺陷。`main` 只捕获 `count_words`、`count_lines`、`count_chars` 或 `longest_word_length` 抛出的 `OSError` 及其子类和 `UnicodeDecodeError`，其他异常都传给调用者。 |
+| 其他任何异常 | 缺陷。`main` 只捕获 `count_words`、`count_lines`、`count_chars` 或 `count_longest` 抛出的 `OSError` 及其子类和 `UnicodeDecodeError`，其他异常都传给调用者。 |
 
 - 副作用：与 F04 设计 2.2 节相同：用 `sys.stdout.write` 和 `sys.stderr.write` 写出，而不是 `print()`（架构第 8 节）；按 2.1 节的说明读取文件；不改变任何全局状态，所以测试可以在一个进程中多次调用它。
 - 性能指标：无
@@ -163,7 +163,7 @@ Traceback (most recent call last):
 SystemExit: 2
 ```
 
-### 2.3 `longest_word_length`
+### 2.3 `count_longest`
 
 - 模块：counting。调用者从包 `troy_mode_trial` 导入它，该包由 `src/troy_mode_trial/__init__.py` 定义，与 `count_chars`、`count_lines` 和 `count_words` 并列。本设计不在 `src/troy_mode_trial/` 下新增文件。
 - 功能：读取一个 UTF-8 文本文件，按 `count_words` 的方式找出词，返回最长词的长度（以 Unicode 码位计）；文件中没有词时返回 0。
@@ -171,10 +171,10 @@ SystemExit: 2
 签名：
 
 ```python
-def longest_word_length(path: str | os.PathLike[str]) -> int:
+def count_longest(path: str | os.PathLike[str]) -> int:
 ```
 
-函数名说明了它返回什么。它不以 `count_` 开头，因为它返回的是一个长度，而不是若干东西的个数。
+函数名以 `count_` 开头，与 `count_words`、`count_lines` 和 `count_chars` 一致，使命令背后的四个函数读起来是同一组。这个名字由 Troy 选定。它返回的是一个长度，而不是若干东西的个数，见“功能”和“返回值”。
 
 参数：
 
@@ -182,7 +182,7 @@ def longest_word_length(path: str | os.PathLike[str]) -> int:
 | --- | --- | --- | --- |
 | `path` | `str \| os.PathLike[str]` | 要读取的文件路径，可以是绝对路径，也可以是相对当前工作目录的路径。`pathlib.Path` 是 `os.PathLike[str]`，可以接受。 | 指向一个存在、可读的普通文件，内容是合法的 UTF-8。不接受 `bytes` 路径。 |
 
-- 返回值：`int`，0 或更多。函数把整个文件按 UTF-8 解码，并去掉文件开头的一个字节顺序标记（U+FEFF）（需求 Q5）。它完全按 `count_words` 的方式把文本分成词（F03 设计），返回词的 `len()` 中的最大值；没有词时返回 0。所以 `count_words(path)` 为 0 时，`longest_word_length(path)` 也为 0，反之亦然。
+- 返回值：`int`，0 或更多。函数把整个文件按 UTF-8 解码，并去掉文件开头的一个字节顺序标记（U+FEFF）（需求 Q5）。它完全按 `count_words` 的方式把文本分成词（F03 设计），返回词的 `len()` 中的最大值；没有词时返回 0。所以 `count_words(path)` 为 0 时，`count_longest(path)` 也为 0，反之亦然。在 counting 内部，函数与 `count_words` 使用同一套词规则和同一种读取文件的方式，而不是另写一份，所以两者对“什么是词”不会有分歧。
 
   词和长度的规则：
 
@@ -228,14 +228,14 @@ def longest_word_length(path: str | os.PathLike[str]) -> int:
 
 ```python
 >>> from pathlib import Path
->>> from troy_mode_trial import longest_word_length
->>> longest_word_length("notes.txt")
+>>> from troy_mode_trial import count_longest
+>>> count_longest("notes.txt")
 9
->>> longest_word_length(Path("greeting.txt"))
+>>> count_longest(Path("greeting.txt"))
 3
->>> longest_word_length("dashes.txt")
+>>> count_longest("dashes.txt")
 0
->>> longest_word_length("missing.txt")
+>>> count_longest("missing.txt")
 Traceback (most recent call last):
   ...
 FileNotFoundError: [Errno 2] No such file or directory: 'missing.txt'
@@ -247,29 +247,30 @@ FileNotFoundError: [Errno 2] No such file or directory: 'missing.txt'
 
 1. `wordcount`（F04 设计 2.1 节）新增选项 `--longest`。`wordcount FILE`、`wordcount --lines FILE` 和 `wordcount --chars FILE` 打印的数、错误行和退出码都与以前相同。
 2. 如果 Troy 接受 2.1 节的提议 1，用法行从 `usage: wordcount [--lines | --chars] FILE` 改为 `usage: wordcount [--lines | --chars | --longest] FILE`。每个用法错误的其余部分不变：退出码 2，标准输出为空，第二行是 `wordcount: error: <message>`；不含 `--longest` 的命令行得到的消息与以前相同。期望的用法行按下面的方式修改，用例的其他部分不变：
-   - F05 的测试计划：逐字检查第一行 `usage: wordcount [--lines | --chars] FILE` 的用例 F05-T13、F05-T14、F05-T15 和 F05-T23。在 `tests/test_cli_lines.py` 中，它们从常量 `USAGE_BOTH` 取得这一行。它们期望的第一行改为提议 1 的用法行。它们的第二行，包括 `argument --chars: not allowed with argument --lines`，不变。
+   - F05 的测试计划：逐字检查第一行 `usage: wordcount [--lines | --chars] FILE` 的用例 F05-T13、F05-T14、F05-T15 和 F05-T23。在 `tests/test_cli_lines.py` 中，它们从常量 `USAGE_BOTH` 取得这一行。它们期望的第一行改为提议 1 的用法行。F05 已经验收，所以这些用例在 F07 的每个 PR 中、在 F07 的代码合入之前和之后都必须通过（R10）。在 F07 的测试 PR 中直接替换 `USAGE_BOTH`，会让它们在代码合入之前失败，所以它们的检查必须在 F07 的代码之前接受旧的用法行，之后接受新的用法行。它们的第二行，包括 `argument --chars: not allowed with argument --lines`，不变。
    - F06 的测试计划：F06-T28 和 F06-T34 检查用法行在 ` FILE` 之前的一对方括号中含有 `--chars`，新的用法行仍然如此，所以它们不变。
    - F04 的测试计划 1.1 只检查用法行以 `usage: wordcount ` 开头，v0.3 的版本测试计划只检查标准错误以 `usage:` 开头，所以它们不变。
    - F05 和 F06 的设计在示例中显示的是当时的用法行。本设计不修改它们，就像 F05 的设计没有修改 F06 的设计一样。
 3. 带 `--longest` 的命令行以前是用法错误，消息为 `unrecognized arguments: --longest`。现在它得到 2.1 节的数；与 `--lines` 或 `--chars` 同时出现时，得到 2.1 节的用法错误。
-4. `main`（F04 设计 2.2 节）保持签名不变。它现在接受 `argv` 中的 `--longest`，此时调用 `longest_word_length`。
-5. `src/troy_mode_trial/__init__.py` 在 `count_chars`、`count_lines` 和 `count_words` 旁边导出 `longest_word_length`。这只新增一个名字，不改变已有的名字。三个统计函数保持签名、行为和错误不变，`__init__.py` 仍然不导入 cli。
+4. `main`（F04 设计 2.2 节）保持签名不变。它现在接受 `argv` 中的 `--longest`，此时调用 `count_longest`。
+5. `src/troy_mode_trial/__init__.py` 在 `count_chars`、`count_lines` 和 `count_words` 旁边导出 `count_longest`。这只新增一个名字，不改变已有的名字。三个统计函数保持签名、行为和错误不变，`__init__.py` 仍然不导入 cli。
 
 ## 4. 架构师审查
 
 | 项目 | 结果 | 备注 |
 | --- | --- | --- |
-| 符合模块划分和数据模型 | 通过 | `wordcount` 和 `main` 仍在 cli 中，位于 `src/troy_mode_trial/cli.py`。`longest_word_length` 放在 counting 中，并从 counting 的外部接口 `src/troy_mode_trial/__init__.py` 导出。这两个文件都已在 counting 的“拥有”列中，本设计不在 `src/troy_mode_trial/` 下新增文件。`main` 从包导入四个函数，符合架构第 4 节。量词长与需求 Q6 为行数解决过的情况相同，所以本设计不需要修改架构。argparse 互斥组的第三个成员仍是标准库（ADR-0001），所以本设计不增加依赖。架构没有定义数据模型。 |
-| 遵守错误处理和命名约定 | 通过 | `longest_word_length` 不定义自己的异常，错误表与三个统计函数相同（架构第 6 节，需求 Q4）。`main` 仍然只捕获 `OSError` 及其子类和 `UnicodeDecodeError`；加 `--longest` 时写出同样的一行 `wordcount: <FILE>: <reason>`，退出码 2（ADR-0002）。错误的命令行以退出码 2 和用法行结束（需求 Q16），退出码 1 仍然只表示缺陷，标准输出只有数和一个换行符，用 `write` 写出（第 8 节）。架构没有函数命名规则。这个名字不遵循 `count_` 的模式，理由已写明：函数返回的是长度。我同意。按接口设计师的请求，我运行了 argparse（Python 3.14.3；这台机器上没有项目的 Python 3.13 环境），设置 `prog="wordcount"`、`add_help=False`、`allow_abbrev=False`，互斥组依次为 `--lines`、`--chars`、`--longest`，再加 `FILE`。它给出用法行 `usage: wordcount [--lines \| --chars \| --longest] FILE`，以及与 2.1 节错误表完全相同的两条消息；`--chars --longest` 给出 `argument --longest: not allowed with argument --chars`；不带文件的 `--longest --lines` 给出 `argument --lines: not allowed with argument --longest`，所以两个选项的错误先于缺少 `FILE` 的错误。`--lines --chars` 仍给出 `argument --chars: not allowed with argument --lines`。`--longest FILE`、`FILE --longest`、`--longest --longest`、`--longest -- -n.txt`、`-- --longest`、`-L`、`--long`、`--lo`、`-h`、`--longest=x`、不带文件的 `--longest` 和两个文件的结果也都与设计所说相同。我还按 F03 的词规则手工核对了 2.3 节表格的十二行和示例中的数。 |
-| 不和已有接口重复 | 通过 | 没有已有接口量词长。`main` 只通过 `longest_word_length` 得到长度，自己不量任何东西。`longest_word_length` 与 `count_words` 共用词规则和读取规则，这是 counting 内部代码层面的事，不是第二个接口。 |
+| 符合模块划分和数据模型 | 通过 | `wordcount` 和 `main` 仍在 cli 中，位于 `src/troy_mode_trial/cli.py`。`count_longest` 放在 counting 中，并从 counting 的外部接口 `src/troy_mode_trial/__init__.py` 导出。这两个文件都已在 counting 的“拥有”列中，本设计不在 `src/troy_mode_trial/` 下新增文件。`main` 从包导入四个函数，符合架构第 4 节。量词长与需求 Q6 为行数解决过的情况相同，所以本设计不需要修改架构。argparse 互斥组的第三个成员仍是标准库（ADR-0001），所以本设计不增加依赖。架构没有定义数据模型。 |
+| 遵守错误处理和命名约定 | 通过 | `count_longest` 不定义自己的异常，错误表与三个统计函数相同（架构第 6 节，需求 Q4）。`main` 仍然只捕获 `OSError` 及其子类和 `UnicodeDecodeError`；加 `--longest` 时写出同样的一行 `wordcount: <FILE>: <reason>`，退出码 2（ADR-0002）。错误的命令行以退出码 2 和用法行结束（需求 Q16），退出码 1 仍然只表示缺陷，标准输出只有数和一个换行符，用 `write` 写出（第 8 节）。架构没有函数命名规则。`count_longest` 以 `count_` 开头，与 `count_words`、`count_lines` 和 `count_chars` 一致，这是 Troy 在 PR #79 上的决定，使命令背后的四个函数读起来是同一组。2.3 节明确说明它返回的是一个长度，而不是若干东西的个数，所以这个名字不会让调用者误解结果。这个名字与包中和 cli 中的任何名字都不冲突，两种语言的第 2 节和第 3 节都处处使用它。按接口设计师的请求，我运行了 argparse（Python 3.14.3；这台机器上没有项目的 Python 3.13 环境），设置 `prog="wordcount"`、`add_help=False`、`allow_abbrev=False`，互斥组依次为 `--lines`、`--chars`、`--longest`，再加 `FILE`。它给出用法行 `usage: wordcount [--lines \| --chars \| --longest] FILE`，以及与 2.1 节错误表完全相同的两条消息；`--chars --longest` 给出 `argument --longest: not allowed with argument --chars`；不带文件的 `--longest --lines` 给出 `argument --lines: not allowed with argument --longest`，所以两个选项的错误先于缺少 `FILE` 的错误。`--lines --chars` 仍给出 `argument --chars: not allowed with argument --lines`。`--longest FILE`、`FILE --longest`、`--longest --longest`、`--longest -- -n.txt`、`-- --longest`、`-L`、`--long`、`--lo`、`-h`、`--longest=x`、不带文件的 `--longest` 和两个文件的结果也都与设计所说相同。我还按 F03 的词规则手工核对了 2.3 节表格的十二行和示例中的数。 |
+| 不和已有接口重复 | 通过 | 没有已有接口量词长。`main` 只通过 `count_longest` 得到长度，自己不量任何东西。`count_longest` 与 `count_words` 共用词规则和读取规则，2.3 节现在写明了这一点，这是 counting 内部代码层面的事，不是第二个接口。 |
 | 只依赖排序在前面的功能 | 通过 | F07 只依赖 F04，并经由它依赖 F03 和 F01。三者在顺序（F01、F03、F04、F07、F06、F02、F05）中都排在 F07 之前，并且已在 Troy 的设备上可用。F05 和 F06 在顺序中排在 F07 之后，但它们已验收，代码已在 `main` 上，所以 F07 只是给它们建好的互斥组加第三个成员，不需要等待任何功能。它不调用它们的函数。 |
-| 不在模块之间增加隐性耦合 | 通过 | cli 只依赖 `longest_word_length` 写明的内容：签名、`int` 结果和错误表中的异常，架构第 6 节已经列出这些异常。互斥的选项集合在 cli 中，counting 对选项一无所知。`wordcount` 和 `wordcount --longest` 对“词”的理解一致，这条规则留在 counting 内部。`src/troy_mode_trial/__init__.py` 只新增名字 `longest_word_length`，仍然不导入 cli。`main` 不保留全局状态。 |
-| 修改已实现的接口时走了变更流程 | 通过 | F04、F05 和 F06 已验收。需求 7.0（提交 `3cc6e1b`，Troy 已批准）给 F04 的命令加入 `--longest`，并带有 Q14 到 Q16，所以修改走了需求变更流程。F05 定下的用法行只有在 Troy 接受提议 1 时才改变。第 3 节列出了每处修改：选项、用法行、以前的 `unrecognized arguments: --longest` 错误、`main` 不变的签名和新的导出。我检查了 `tests/test_cli_lines.py`、`tests/test_cli_chars.py`、`tests/test_cli.py` 和各测试计划。使用 `USAGE_BOTH` 的正好是 F05-T13、F05-T14、F05-T15 和 F05-T23。F06 的模式 `^usage: wordcount \[[^\]]*--chars[^\]]*\] FILE$` 能匹配新的用法行。F04 的计划 1.1 和 v0.3 的版本测试计划只检查这一行的开头。 |
-| 给 Troy 的摘要和设计说的一致，并列出了需要 Troy 决定的每一件事 | 通过 | 摘要与设计一致：以字符计的长度，包括标点，`don't,` 是 6，`世界!` 是 3；没有词的文件为 0；Windows 和 Linux 行尾结果相同；只认全名，可写在文件之前或之后；与 `--lines` 或 `--chars` 同用是用法错误；文件错误和退出码 2 相同；其他命令不变；新的库函数；需要重新安装。它的一件决定事项就是 2.1 节的提议 1，带有设计的推荐和理由。设计没有其他待定的选择。它的两条风险与 2.3 节（由几个码位组成的字符）和 2.1 节（不含空格的长串）一致。我量得中文约 790 个字符，英文约 1,690 个，都少于 2,000。两部分都没有 troy-check 的 R22 模式能找到的内部编号。功能编号是允许的。 |
+| 不在模块之间增加隐性耦合 | 通过 | cli 只依赖 `count_longest` 写明的内容：签名、`int` 结果和错误表中的异常，架构第 6 节已经列出这些异常。互斥的选项集合在 cli 中，counting 对选项一无所知。`wordcount` 和 `wordcount --longest` 对“词”的理解一致，这条规则留在 counting 内部。`src/troy_mode_trial/__init__.py` 只新增名字 `count_longest`，仍然不导入 cli。`main` 不保留全局状态。 |
+| 修改已实现的接口时走了变更流程 | 通过 | F04、F05 和 F06 已验收。需求 7.0（提交 `3cc6e1b`，Troy 已批准）给 F04 的命令加入 `--longest`，并带有 Q14 到 Q16，所以修改走了需求变更流程。F05 定下的用法行只有在 Troy 接受提议 1 时才改变。第 3 节列出了每处修改：选项、用法行、以前的 `unrecognized arguments: --longest` 错误、`main` 不变的签名和新的导出。我检查了 `tests/test_cli_lines.py`、`tests/test_cli_chars.py`、`tests/test_cli.py` 和各测试计划。使用 `USAGE_BOTH` 的正好是 F05-T13、F05-T14、F05-T15 和 F05-T23。F06 的模式 `^usage: wordcount \[[^\]]*--chars[^\]]*\] FILE$` 能匹配新的用法行。F04 的计划 1.1 和 v0.3 的版本测试计划只检查这一行的开头。改名为 `count_longest` 不改变任何已实现的接口：F07 的代码不在 `main` 上，没有源文件或测试文件使用这两个名字中的任何一个，而且改名依据的是 Troy 在 PR #79 上的决定。 |
+| 给 Troy 的摘要和设计说的一致，并列出了需要 Troy 决定的每一件事 | 通过 | 摘要与设计一致：以字符计的长度，包括标点，`don't,` 是 6，`世界!` 是 3；没有词的文件为 0；Windows 和 Linux 行尾结果相同；只认全名，可写在文件之前或之后；与 `--lines` 或 `--chars` 同用是用法错误；文件错误和退出码 2 相同；其他命令不变；新的库函数；需要重新安装。它的一件决定事项就是 2.1 节的提议 1，带有设计的推荐和理由。设计没有其他待定的选择。它的两条风险与 2.3 节（由几个码位组成的字符）和 2.1 节（不含空格的长串）一致。我量得中文约 790 个字符，英文约 1,690 个，都少于 2,000。两部分都没有 troy-check 的 R22 模式能找到的内部编号。功能编号是允许的。对 1.1 版，PR #82 的摘要与这次修改一致：新名字 `count_longest` 及其原因；函数仍在 counting 中，不新增模块；它的行为、结果和错误不变；命令不变；以及 2.3 节和第 3 节的两处澄清，它们不改变任何行为。摘要没有列出需要 Troy 决定的事项，这是对的，因为名字和模块都是 Troy 在 PR #79 上的决定，设计也没有其他待定的选择。它的一条风险，即函数名以“count”开头却返回一个长度，正是 2.3 节所说的。 |
 
 | 轮次 | 问题 | 解决方式 |
 | --- | --- | --- |
 | 1 | 没有阻塞问题。用法行和两个选项同用时的消息已通过运行 argparse 确认，见检查表第二行。以下说明不阻塞。给接口设计师：摘要说 `wordcount FILE`、`--lines` 和 `--chars` 的输出和现在一样。它们的数和文件错误确实不变，但如果 Troy 接受决定事项，它们用法错误的第一行会变；摘要也说了这一点，所以不需要修改。给开发者：把 `--longest` 加到现有互斥组中 `--chars` 之后。在 `longest_word_length` 中用与 `count_words` 相同的 `_checked_path`、空路径检查、`encoding="utf-8-sig"` 读取、`str.split()` 和 `_has_letter_or_digit` 找词，使两者不会不一致。更新 `_build_parser` 和 `main` 文档注释中的用法行，并让 `main` 不超过 50 行（R04），例如扩展 `_count_function`。给测试经理：F05-T13、F05-T14、F05-T15 和 F05-T23 测的是已验收的功能，所以在 F07 的每个 PR 中、在 F07 的代码之前和之后都必须通过（R10）。像 F05 用合入检查应对 F06 那样，让它们期望的第一行取决于分支上是否已有 `--longest`，或用模式检查，而不是直接替换 `USAGE_BOTH`。给产品经理：F07 的原型说 `世界!` 是 3 个字符，“不是 9 个字节”。它是 7 个字节，与设计 2.1 节所说相同。 | 第 1 轮通过。 |
+| 1（PR #82，1.1 版） | 没有阻塞问题。两种语言的第 2 节和第 3 节都已把 `longest_word_length` 完整改名为 `count_longest`，本节现在也使用新名字。函数仍在 counting 中，这是 Troy 在 PR #79 上的决定；它的签名、结果和错误不变。2.3 节和第 3 节的两处澄清与第 1 轮给开发者和测试经理的说明一致，这些说明现在适用于 `count_longest`。以下说明不阻塞：2.1 节仍把用法行称为“提议 1，由 Troy 接受或修改”，第 3 节第 2 项仍说“如果 Troy 接受提议 1”，而 Troy 已在 1.0 版批准了设计。接口设计师可以在以后的修订中改写这两处。 | 第 1 轮通过。 |
 
 ## 5. 修改记录
 
@@ -277,3 +278,4 @@ FileNotFoundError: [Errno 2] No such file or directory: 'missing.txt'
 | --- | --- | --- |
 | 0.1 | 2026-11-25 | 初稿。 |
 | 1.0 | 2026-11-25 | Troy 批准。 |
+| 1.1 | 2026-11-25 | Troy 推翻了 PR #81 第 3 轮的裁定，库函数 `longest_word_length` 因此改名为 `count_longest`，与 `count_words`、`count_lines` 和 `count_chars` 一致。它仍在模块 counting 中，它做什么、返回什么、抛出什么都不变。删去了为旧名字给出的理由。2.3 节现在说明函数与 `count_words` 共用词规则和读取文件的方式；第 3 节说明 F05 检查用法行的用例在 F07 的代码之前和之后都必须通过。 |
