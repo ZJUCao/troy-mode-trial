@@ -1,8 +1,8 @@
 ---
 troy-doc: "rules"
 lang: "en"
-version: "4.2"
-updated: "2026-11-17"
+version: "4.3"
+updated: "2026-11-25"
 status: "Approved by Troy on 2026-11-08"
 mirror: "rules.zh-CN.md"
 ---
@@ -42,6 +42,7 @@ mirror: "rules.zh-CN.md"
 | R20 | A merged document or PR description holds no template markers or template guidance. | Hard | CI | troy-mode | 2026-11-07 |
 | R21 | Every change reaches `main` through a PR from its own branch. Never commit on `main`, push `main`, or open a PR from `main`. | Hard | Hook and CI | troy-mode | 2026-11-07 |
 | R22 | The description of every interface design, test plan, requirements, and architecture PR opens with a summary for Troy, in Chinese and then English: what changes for Troy, each point Troy decides with a recommendation, and the risks. Each language has at most 2,000 characters (`[summary] max_chars` in `.troy-mode/config.toml`) and holds no internal IDs. | Hard | CI | troy-mode | 2026-11-14 |
+| R23 | In a command that troy-mode runs, Python never reads its program from standard input: no `python -`, no `python -i`, and no `python` without a script, `-c`, or `-m`, whatever feeds standard input (a heredoc, a pipe, `/dev/null`, or nothing). Such a run can hang at Python's interactive prompt. Write the script to a file in the scratchpad and run that file with the project's Python. | Hard | Hook (refuses the command before it starts) | troy-mode | 2026-11-25 |
 | P01 | An exception message is never an f-string written inside the raise. Build the message in a variable first, for example msg = f"...", then raise ValueError(msg). | Hard | Lint (ruff EM102) | project | 2026-11-08 |
 | P02 | Retired on 2026-11-08. Every error message says which file it is about. This includes Python's own exceptions that the library lets through: if Python's message does not name the file, catch the exception and raise the same type again with the file's path in its message. An error that is about no file, such as a path argument of the wrong type, is exempt. | Review | None | project | 2026-11-08 |
 
@@ -55,3 +56,4 @@ mirror: "rules.zh-CN.md"
 | 4.0 | 2026-11-08 | Retired P02, every error message names its file, approved by Troy. Reason: the rule was added only for the trial run. |
 | 4.1 | 2026-11-14 | troy-mode's rules brought up to troy-pstack 0.5.0. |
 | 4.2 | 2026-11-17 | troy-mode's rules brought up to tstack 0.7.0. |
+| 4.3 | 2026-11-25 | troy-mode's rules brought up to tstack 0.18.0. |

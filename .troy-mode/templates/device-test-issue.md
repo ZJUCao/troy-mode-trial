@@ -1,6 +1,4 @@
-<!--
-template: The body of a version's device-test checklist (F15 design 6.2). troy-mode's engine renders it in code through `troy_flow.py issues` once the release test passes, and the main session posts it; nobody fills this file in. It holds both languages, Chinese first, with the English part folded. Each scenario Troy runs is copied from the version test plan (sections 2 and 3) and its mirror; the plan stays the source. Troy ticks the boxes; troy-mode never ticks one. Ticking every box, the last one included, accepts the version. A patch release keeps its scenario list in the second marker line.
--->
+<!-- template: The body of a version's device-test checklist (F15 design 6.2). troy-mode's engine renders it in code through `troy_flow.py issues` once the release test passes, and the main session posts it; nobody fills this file in. It holds both languages, Chinese first, with the English part folded. Each scenario Troy runs is copied from the version test plan (sections 2 and 3) and its mirror; the plan stays the source. Troy ticks the boxes; troy-mode never ticks one. Ticking every box, the last one included, accepts the version. A patch release keeps its scenario list in the second marker line. -->
 <!-- troy-mode: device-test {{tag}} -->
 [<!-- troy-mode: scenarios {{ID}},{{ID}} -->]
 **在你的设备上测试 {{tag}}** · 第 {{run}} 轮 · 要测的提交：{{commit}}

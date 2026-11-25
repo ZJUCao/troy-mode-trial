@@ -1,6 +1,4 @@
-<!--
-template: The body of a feature's progress issue (F15 design 4.2). troy-mode's engine renders it in code from the state at every sync, through `troy_flow.py issues`, and the main session posts it; nobody fills this file in. It holds both languages, Chinese first, with the English part folded. The boxes are in the Chinese part only. A line in [square brackets] appears only when it applies. Links are full URLs to files on main. No time stamp.
--->
+<!-- template: The body of a feature's progress issue (F15 design 4.2). troy-mode's engine renders it in code from the state at every sync, through `troy_flow.py issues`, and the main session posts it; nobody fills this file in. It holds both languages, Chinese first, with the English part folded. The boxes are in the Chinese part only. A line in [square brackets] appears only when it applies. Links are full URLs to files on main. No time stamp. -->
 <!-- troy-mode: progress {{feature-id}} -->
 **{{feature-id}} {{中文功能名}}** · {{version}} · 第 {{stage}} 步，共 6 步
 
