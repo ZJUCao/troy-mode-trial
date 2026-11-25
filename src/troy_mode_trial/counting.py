@@ -91,8 +91,6 @@ def count_longest(path: str | os.PathLike[str]) -> int:
     letter or digit, such as `--`, is not a word, and its length never counts.
     A U+FEFF anywhere else is part of the run it is in.
 
-    The mock raises ``NotImplementedError``.
-
     Args:
         path: The path of the file to read, absolute or relative to the
             current working directory. It names one existing, readable,
@@ -112,7 +110,7 @@ def count_longest(path: str | os.PathLike[str]) -> int:
         UnicodeDecodeError: Any byte of the file is not valid UTF-8.
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
-    raise NotImplementedError
+    return max((len(run) for run in _read_words(path)), default=0)
 
 
 def count_words(path: str | os.PathLike[str]) -> int:
@@ -147,12 +145,34 @@ def count_words(path: str | os.PathLike[str]) -> int:
         UnicodeDecodeError: The file content is not valid UTF-8.
         TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
     """
+    return len(_read_words(path))
+
+
+def _read_words(path: str | os.PathLike[str]) -> list[str]:
+    """Read one UTF-8 text file and return its words.
+
+    Args:
+        path: The path of the file to read, as for `count_words`.
+
+    Returns:
+        The words of the file in order, each a run of characters for which
+        `str.isspace()` is false and `str.isalnum()` is true for at least one.
+        One byte order mark (U+FEFF) at the start of the file is removed.
+
+    Raises:
+        FileNotFoundError: No file exists at `path`, or `path` is empty.
+        IsADirectoryError: `path` names a folder (Linux).
+        PermissionError: `path` names a folder (Windows), or the process may
+            not read the file.
+        UnicodeDecodeError: The file content is not valid UTF-8.
+        TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
+    """
     text_path = _checked_path(path)
     if text_path == "":
         # Path("") becomes Path("."), the current folder; an empty path names no file.
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), text_path)
     with Path(text_path).open(encoding="utf-8-sig") as handle:
-        return sum(1 for run in handle.read().split() if _has_letter_or_digit(run))
+        return [run for run in handle.read().split() if _has_letter_or_digit(run)]
 
 
 def _checked_path(path: object) -> str:
