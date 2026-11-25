@@ -16,6 +16,7 @@ WINDOWS = b"Hello world\r\n  troy-mode  trial\r\n"
 LATIN1 = "café au lait\n".encode("latin-1")
 USAGE_LINES_ONLY = "usage: wordcount [--lines] FILE"
 USAGE_BOTH = "usage: wordcount [--lines | --chars] FILE"
+USAGE_ALL = "usage: wordcount [--lines | --chars | --longest] FILE"
 _NL = os.linesep.encode()
 
 
@@ -85,6 +86,26 @@ def _chars_landed_main(capsys: pytest.CaptureFixture[str]) -> bool:
     return True
 
 
+def _longest_landed_main(capsys: pytest.CaptureFixture[str]) -> bool:
+    """Ask `main` whether F07's code is on the branch under test.
+
+    Args:
+        capsys: pytest's capture fixture. The output of the probe is thrown away.
+
+    Returns:
+        True if `--longest` works, false if it is an unknown option.
+    """
+    try:
+        code = main(["--longest", "notes.txt"])
+    except SystemExit as exit_info:
+        capsys.readouterr()
+        assert exit_info.code == 2
+        return False
+    capsys.readouterr()
+    assert code == 0
+    return True
+
+
 def _usage_main(capsys: pytest.CaptureFixture[str]) -> str:
     """Find the usage line of the state of the branch, through `main`.
 
@@ -94,6 +115,8 @@ def _usage_main(capsys: pytest.CaptureFixture[str]) -> str:
     Returns:
         The expected first line of a usage error.
     """
+    if _longest_landed_main(capsys):
+        return USAGE_ALL
     return USAGE_BOTH if _chars_landed_main(capsys) else USAGE_LINES_ONLY
 
 
@@ -276,7 +299,7 @@ def test_f05_t12_cannot_read_file(work: pathlib.Path, capsys: pytest.CaptureFixt
 def test_f05_t13_both_options(work: pathlib.Path, capsys: pytest.CaptureFixture[str]) -> None:
     """`--lines` with `--chars` is a usage error, in any order and at any place."""
     landed = _chars_landed_main(capsys)
-    usage = USAGE_BOTH if landed else USAGE_LINES_ONLY
+    usage = _usage_main(capsys)
     not_chars = "wordcount: error: argument --chars: not allowed with argument --lines"
     not_lines = "wordcount: error: argument --lines: not allowed with argument --chars"
     unknown = "wordcount: error: unrecognized arguments: --chars"
@@ -440,7 +463,11 @@ def test_f05_t23_program_usage(work: pathlib.Path) -> None:
     probe = _program(work, ["--chars", "notes.txt"])
     assert probe.returncode in (0, 2)
     landed = probe.returncode == 0
+    longest = _program(work, ["--longest", "notes.txt"])
+    assert longest.returncode in (0, 2)
     usage = USAGE_BOTH if landed else USAGE_LINES_ONLY
+    if longest.returncode == 0:
+        usage = USAGE_ALL
     both = (
         "wordcount: error: argument --chars: not allowed with argument --lines"
         if landed
