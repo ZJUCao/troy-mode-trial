@@ -1,8 +1,8 @@
 ---
 troy-doc: "v0.3-test-plan"
 lang: "en"
-version: "0.1"
-updated: "2026-11-23"
+version: "0.2"
+updated: "2026-11-25"
 status: "Draft."
 mirror: "test-plan.zh-CN.md"
 ---
@@ -12,22 +12,22 @@ mirror: "test-plan.zh-CN.md"
 ## 1. Version
 
 - Version: v0.3
-- Features: F05, F06
+- Features: F05, F06, F07
 - Requirements: [docs/requirements.md](../../requirements.md#6-version-plan)
 
 ## 2. End-to-end scenarios
 
 Every test makes its own files in a temporary folder. It writes each file in binary mode, as the exact bytes the scenario gives, so that Windows never turns `\n` into `\r\n`. Characters outside ASCII are encoded as UTF-8 unless the scenario gives other bytes.
 
-The scenarios follow the `wordcount --lines FILE` and `wordcount --chars FILE` flows in requirements section 3, the F05 and F06 prototypes, the decisions Q7, Q8, and Q10 to Q13, and the error handling in architecture section 6. The designs of F05 and F06 are not written yet. So the scenarios rely only on what the requirements, the prototypes, and the approved F04 design already fix:
+The scenarios follow the `wordcount --lines FILE`, `wordcount --chars FILE`, and `wordcount --longest FILE` flows in requirements section 3, the F05, F06, and F07 prototypes, the decisions Q5, Q7, Q8, and Q10 to Q16, and the error handling in architecture section 6. Troy approved the designs of F05 and F06, and both features are accepted. The design of F07 is not written yet. So the scenarios rely only on what the requirements, the prototypes, and the approved designs of F04, F05, and F06 already fix:
 
-- A file error prints one line `wordcount: <FILE>: <reason>` to standard error and exits with code 2 (ADR-0002). Q8 and F06's requirement say that each option gives the same message and exit code as `wordcount FILE`. So for a file that is not valid UTF-8, a scenario compares the option's output with the output of `wordcount FILE` for the same file, instead of fixing a reason text.
-- A wrong command line exits with code 2, leaves standard output empty, and writes a usage line to standard error. The designs may change the usage line to show the new options, so a scenario checks only that standard error starts with `usage:`.
+- A file error prints one line `wordcount: <FILE>: <reason>` to standard error and exits with code 2 (ADR-0002). Q8 and the requirements of F06 and F07 say that each option gives the same message and exit code as `wordcount FILE`. So for a file that is not valid UTF-8, a scenario compares the option's output with the output of `wordcount FILE` for the same file, instead of fixing a reason text.
+- A wrong command line exits with code 2, leaves standard output empty, and writes a usage line to standard error. The F05 design fixes the usage line `usage: wordcount [--lines | --chars] FILE`, and the F07 design may change it to show `--longest`. So a scenario checks only that standard error starts with `usage:`.
 
 The scenarios run the installed command, as Troy does. The release test runs in the conda environment `troy-mode-trial` with the project installed, so `wordcount.exe` is in the environment's scripts folder and on `PATH`. If no `wordcount` is on `PATH`, the test fails. It never skips.
 
-- v0.3-S01 to v0.3-S14 start the `wordcount` that is on `PATH`, the program that PowerShell starts for `wordcount`, as a new process with the scenario's arguments. Each test captures standard output, standard error, and the exit code.
-- v0.3-S15 runs the commands in Windows PowerShell, `powershell.exe -NoProfile -NonInteractive -Command`, to check that PowerShell finds the command with each option and that `$LASTEXITCODE` holds its exit code.
+- v0.3-S01 to v0.3-S14 and v0.3-S17 to v0.3-S24 start the `wordcount` that is on `PATH`, the program that PowerShell starts for `wordcount`, as a new process with the scenario's arguments. Each test captures standard output, standard error, and the exit code.
+- v0.3-S15 and v0.3-S25 run the commands in Windows PowerShell, `powershell.exe -NoProfile -NonInteractive -Command`, to check that PowerShell finds the command with each option and that `$LASTEXITCODE` holds its exit code.
 
 When a scenario compares output, it reads `\r\n` as `\n`. "One line break" means one `\n` or one `\r\n` at the end. Unless a scenario says otherwise, the working directory is the files' folder.
 
@@ -39,9 +39,17 @@ v0.3-S01 to v0.3-S06 run `wordcount --lines`. The command counts lines as F02 co
 
 v0.3-S07 to v0.3-S12 run `wordcount --chars`. A character is one Unicode code point of the decoded text, line ends included. `\r\n` is two characters, and the command translates no line end (Q11). One byte order mark at the start of the file is not counted (Q12).
 
-### 2.3 Wrong command lines and PowerShell (F05 and F06)
+### 2.3 Wrong command lines and PowerShell (F05, F06, and F07)
 
-v0.3-S13 and v0.3-S14 check the command lines that requirements section 8 and the decisions Q7, Q10, and Q13 rule out. v0.3-S15 and v0.3-S16 run both options in PowerShell, as Troy does.
+v0.3-S13 and v0.3-S14 check the command lines that requirements section 8 and the decisions Q7, Q10, and Q13 rule out. v0.3-S15 runs `--lines` and `--chars` in PowerShell, as Troy does. Troy runs v0.3-S16 by hand, with all three options.
+
+### 2.4 Find the longest word in PowerShell (F07)
+
+v0.3-S17 to v0.3-S25 run `wordcount --longest`. A word is what F03 counts as a word: the whole run of characters that are not white space, if it holds at least one letter or digit. Punctuation that touches a word belongs to it (Q15). The length is the number of Unicode code points, as for `--chars`. One byte order mark at the start of the file is not part of a word (Q5). A file with no word prints 0. v0.3-S24 checks the command lines that requirements section 8 and the decisions Q14 and Q16 rule out.
+
+### 2.5 All scenarios
+
+The table lists the scenarios of sections 2.1 to 2.4 in the order of their IDs.
 
 | ID | Scenario | Run by | Steps | Expected result |
 | --- | --- | --- | --- | --- |
@@ -60,15 +68,32 @@ v0.3-S13 and v0.3-S14 check the command lines that requirements section 8 and th
 | v0.3-S13 | Both options in one command get a usage line, not a count. | Claude | 1. Write `notes.txt` as in v0.3-S01. 2. Run `wordcount --lines --chars notes.txt`. 3. Run `wordcount --chars --lines notes.txt`. | For each run, standard output is empty, standard error starts with `usage:`, and the exit code is 2. |
 | v0.3-S14 | Other wrong command lines with the options get a usage line, not a count. | Claude | 1. Write `notes.txt` as in v0.3-S01. 2. Run `wordcount --lines` with no file. 3. Run `wordcount --chars` with no file. 4. Run `wordcount --lines notes.txt notes.txt`. 5. Run `wordcount --chars notes.txt notes.txt`. 6. Run `wordcount -l notes.txt`. 7. Run `wordcount -c notes.txt`. | For each run, standard output is empty, standard error starts with `usage:`, and the exit code is 2. |
 | v0.3-S15 | Troy counts lines and characters in a PowerShell session, in a folder whose name holds a space, as in the F05 and F06 prototypes. | Claude | 1. Make a folder named `my notes` and write `notes.txt` in it as in v0.3-S01. 2. Make `my notes` the working directory. 3. Run one Windows PowerShell process, `powershell.exe -NoProfile -NonInteractive -Command`, with these commands in order: `wordcount --lines notes.txt`, `Write-Output "exit $LASTEXITCODE"`, `wordcount --chars notes.txt`, `Write-Output "exit $LASTEXITCODE"`, `wordcount --lines missing.txt`, `Write-Output "exit $LASTEXITCODE"`, `wordcount --chars '<absolute path of notes.txt>'`, `Write-Output "exit $LASTEXITCODE"`, `wordcount --chars missing.txt`, and `Write-Output "exit $LASTEXITCODE"`. | Standard output holds exactly the lines `2`, `exit 0`, `31`, `exit 0`, `exit 2`, `31`, `exit 0`, and `exit 2`, in that order. Standard error holds `missing.txt` twice. |
-| v0.3-S16 | Troy counts the lines and the characters of a file with Chinese text in Windows Terminal. | Troy | 1. Open Windows Terminal with PowerShell in the conda environment `troy-mode-trial`. 2. Make a folder the working directory. 3. Run `Set-Content -Path chinese.txt -Encoding UTF8 -Value '你好 世界','第二 行'`. 4. Run `wordcount --lines chinese.txt`. 5. Run `wordcount --chars chinese.txt`. 6. Run `wordcount chinese.txt`. | Windows Terminal shows `2`, `13`, and `4`, each on its own line, and no error. |
+| v0.3-S16 | Troy counts the lines and the characters of a file with Chinese text in Windows Terminal, and finds the length of its longest word. | Troy | 1. Open Windows Terminal with PowerShell in the conda environment `troy-mode-trial`. 2. Make a folder the working directory. 3. Run `Set-Content -Path chinese.txt -Encoding UTF8 -Value '你好 世界','第二 行'`. 4. Run `wordcount --lines chinese.txt`. 5. Run `wordcount --chars chinese.txt`. 6. Run `wordcount chinese.txt`. 7. Run `wordcount --longest chinese.txt`. | Windows Terminal shows `2`, `13`, `4`, and `2`, each on its own line, and no error. |
+| v0.3-S17 | Find the length of the longest word of a file with the option, and count its words without it, as in the F07 prototype. | Claude | 1. Write `notes.txt` as in v0.3-S01. 2. Run `wordcount --longest notes.txt`. 3. Run `wordcount notes.txt`. | Step 2 prints exactly `9` and one line break. Step 3 prints exactly `4` and one line break. Both runs leave standard error empty and exit with code 0. |
+| v0.3-S18 | Measure the longest word in characters, not bytes, with its punctuation, as in the F07 prototype. | Claude | 1. Write `greeting.txt` with `你好 世界!\r\n`. 2. Run `wordcount --longest greeting.txt`. | Standard output is exactly `3` and one line break. Standard error is empty. The exit code is 0. |
+| v0.3-S19 | Find the longest word of files with no word, as in the F07 prototype. | Claude | 1. Write `dashes.txt` with `-- ...\n`. 2. Write an empty `empty.txt`. 3. Write `bom-only.txt` with the bytes `EF BB BF` and nothing else. 4. Run `wordcount --longest dashes.txt`. 5. Run `wordcount --longest empty.txt`. 6. Run `wordcount --longest bom-only.txt`. | Steps 4, 5, and 6 each print `0` and one line break. Each run leaves standard error empty and exits with code 0. |
+| v0.3-S20 | Find the longest word of a file that does not exist, as in the F07 prototype. | Claude | 1. Make an empty folder the working directory. 2. Run `wordcount --longest missing.txt`. | Standard output is empty. Standard error is exactly `wordcount: missing.txt: no such file` and one line break. The exit code is 2. |
+| v0.3-S21 | Find the longest word of a file that is not valid UTF-8. | Claude | 1. Write `latin1.txt` as in v0.3-S03. 2. Run `wordcount --longest latin1.txt`. 3. Run `wordcount latin1.txt`. | Step 2 leaves standard output empty, writes one line that starts with `wordcount: latin1.txt: ` and one line break to standard error, and exits with code 2. Its standard error and exit code equal those of step 3. |
+| v0.3-S22 | The option measures the whole word, punctuation included, in code points, and skips runs with no letter or digit. | Claude | 1. Write `punct.txt` with `don't, stop.\n`. 2. Write `combining.txt` with `cafe`, then U+0301, then ` tea\n`. 3. Write `mixed.txt` with the bytes of v0.3-S06, step 1. 4. For each file in the order of steps 1 to 3, run `wordcount --longest` with the file's name. | The three runs print `6`, `5`, and `5`, each followed by one line break. Each run leaves standard error empty and exits with code 0. |
+| v0.3-S23 | The option gets the same length for files made on Windows and on Linux, skips the byte order mark, and takes an absolute path from another folder. | Claude | 1. Write `windows.txt` and `linux.txt` with the bytes of v0.3-S06, step 1. 2. Write `breaks.txt` as in v0.3-S12, step 2. 3. Write `bom-word.txt` with the bytes `EF BB BF` followed by `troy-mode trial\n`. 4. Record the bytes of each file. 5. Make a folder other than the files' folder the working directory. 6. For each file in the order of steps 1 to 3, run `wordcount --longest` with the absolute path of the file. | The four runs print `9`, `9`, `5`, and `9`, each followed by one line break. Each run leaves standard error empty and exits with code 0. Each file keeps the bytes recorded in step 4. |
+| v0.3-S24 | Wrong command lines with `--longest` get a usage line, not a count. | Claude | 1. Write `notes.txt` as in v0.3-S01. 2. Run `wordcount --longest --lines notes.txt`. 3. Run `wordcount --lines --longest notes.txt`. 4. Run `wordcount --longest --chars notes.txt`. 5. Run `wordcount --chars --longest notes.txt`. 6. Run `wordcount --longest` with no file. 7. Run `wordcount --longest notes.txt notes.txt`. 8. Run `wordcount -L notes.txt`. | For each run, standard output is empty, standard error starts with `usage:`, and the exit code is 2. |
+| v0.3-S25 | Troy finds the longest word in a PowerShell session, in a folder whose name holds a space, as in the F07 prototype. | Claude | 1. Make a folder named `my notes`. Write `notes.txt` in it as in v0.3-S01, and `greeting.txt` as in v0.3-S18. 2. Make `my notes` the working directory. 3. Run one Windows PowerShell process, `powershell.exe -NoProfile -NonInteractive -Command`, with these commands in order: `wordcount --longest notes.txt`, `Write-Output "exit $LASTEXITCODE"`, `wordcount --longest '<absolute path of greeting.txt>'`, `Write-Output "exit $LASTEXITCODE"`, `wordcount --longest missing.txt`, and `Write-Output "exit $LASTEXITCODE"`. | Standard output holds exactly the lines `9`, `exit 0`, `3`, `exit 0`, and `exit 2`, in that order. Standard error holds `missing.txt` once. |
 
-No scenario runs on Linux, although requirements section 7 promises the same counts on Windows 11 and on Linux. Claude's scenarios run only in the release test on Troy's PC, which runs Windows 11, and no Linux device of Troy's is on record. v0.3-S05, v0.3-S06, and v0.3-S12 count files with Linux line breaks on Windows instead. The feature tests of F05 and F06 run on Linux in CI.
+The counts in v0.3-S22 and v0.3-S23 fail if the command breaks one rule of section 2.4:
 
-v0.3-S15 uses Windows PowerShell 5.1, `powershell.exe`, because every Windows 11 has it. No scenario runs PowerShell 7, `pwsh`. Both start the same `wordcount.exe`, so v0.3-S01 to v0.3-S14 hold for either.
+- `punct.txt` prints `6` for `don't,`. Without its comma the word would have 5 characters.
+- `combining.txt` prints `5` for `café` written as five code points. Joined into one `é`, the word would have 4.
+- `mixed.txt` prints `5` for `don't`. U+3000 separates `日本語` from `テキスト`, and `_` and `😀` hold no letter or digit, so neither is a word.
+- `breaks.txt` prints `5` for `three`. A lone `\r` is white space, so `one` and `two` are two words.
+- `bom-word.txt` prints `9` for `troy-mode`. With the byte order mark, the word would have 10 characters.
 
-In v0.3-S16, `Set-Content` writes `你好 世界\r\n第二 行\r\n`, 13 characters. Windows PowerShell 5.1 also writes a byte order mark first, and PowerShell 7 does not. The mark is not counted (Q12), so Troy sees `13` in either shell.
+No scenario runs on Linux, although requirements section 7 promises the same counts on Windows 11 and on Linux. Claude's scenarios run only in the release test on Troy's PC, which runs Windows 11, and no Linux device of Troy's is on record. v0.3-S05, v0.3-S06, v0.3-S12, and v0.3-S23 count files with Linux line breaks on Windows instead. The feature tests of F05 and F06 run on Linux in CI, and so will the feature tests of F07.
 
-No scenario checks an option after the file, such as `wordcount notes.txt --lines`, or a shortened option, such as `--line`. The requirements give only the form `wordcount --lines FILE` and do not say whether the other forms are wrong command lines. The designs of F05 and F06 decide, and their feature tests check what they decide.
+v0.3-S15 and v0.3-S25 use Windows PowerShell 5.1, `powershell.exe`, because every Windows 11 has it. No scenario runs PowerShell 7, `pwsh`. Both shells start the same `wordcount.exe`, so v0.3-S01 to v0.3-S14 and v0.3-S17 to v0.3-S24 hold for either.
+
+In v0.3-S16, `Set-Content` writes `你好 世界\r\n第二 行\r\n`, 13 characters. Windows PowerShell 5.1 also writes a byte order mark first, and PowerShell 7 does not. The mark is not counted (Q12) and is not part of a word (Q5), so Troy sees `13` and `2` in either shell.
+
+No scenario checks an option after the file, such as `wordcount notes.txt --lines`, or a shortened option, such as `--line`. The requirements give only the form `wordcount --lines FILE`. The approved designs of F05 and F06 decide that an option may come after the file and that a shortened option is a wrong command line, and their feature tests check both. The F07 design decides the same points for `--longest`, and its feature tests check what it decides.
 
 ## 3. Performance and stress cases
 
@@ -92,3 +117,4 @@ None. Troy has not yet accepted v0.3.
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-11-23 | First draft, for F05 and F06. |
+| 0.2 | 2026-11-25 | Added F07, the `--longest` option, from requirements 7.0: the new scenarios v0.3-S17 to v0.3-S25, and a `--longest` step in v0.3-S16. The plan now relies on the approved F05 and F06 designs. v0.3-S01 to v0.3-S15 do not change. |
