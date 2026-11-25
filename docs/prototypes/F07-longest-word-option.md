@@ -15,7 +15,7 @@ PS> wordcount notes.txt
 
 ## Characters, and the whole word
 
-`greeting.txt` in the current folder is UTF-8 and holds the one line `你好 世界!`, ending with a Windows line end `\r\n`. Its words are `你好` and `世界!`. The exclamation mark belongs to the word, as F03 counts it, so the longest word has 3 characters, not 9 bytes.
+`greeting.txt` in the current folder is UTF-8 and holds the one line `你好 世界!`, ending with a Windows line end `\r\n`. Its words are `你好` and `世界!`. The exclamation mark belongs to the word, as F03 counts it, so the longest word has 3 characters, not 7 bytes.
 
 ```text
 PS> wordcount --longest greeting.txt

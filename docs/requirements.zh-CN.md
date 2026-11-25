@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "7.0"
+version: "7.1"
 updated: "2026-11-25"
 status: "Troy 已于 2026-11-25 批准"
 mirror-of: "requirements.md"
@@ -58,7 +58,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F04 | Word count command | F03 | 无 | v0.2 | 可在 Troy 的设备上使用 |
 | F05 | Line count option | F02, F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 | F06 | Character count option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
-| F07 | Longest word option | F04 | 无 | v0.3 | 未开始 |
+| F07 | Longest word option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -161,3 +161,4 @@ flowchart LR
 | 6.2 | 2026-11-23 | F05 通过验收：状态改为在 Troy 的电脑上真跑过。 |
 | 6.3 | 2026-11-25 | 新功能 F07，Longest word option：`wordcount --longest FILE` 打印一个 UTF-8 文本文件里最长的词的长度（按字符计），词按 F03 的方式划分，没有词的文件打印 0。F04 已经验收，保持不变，所以 F07 是新功能，只硬依赖 F04，在顺序里紧跟 F04（F01, F03, F04, F07, F06, F02, F05），与 F05 和 F06 同属 v0.3。它的原型是 `docs/prototypes/F07-longest-word-option.md`。第 8 节允许 `--longest` 选项。新增问题 Q14 到 Q16。F01 到 F06 不变。 |
 | 7.0 | 2026-11-25 | Troy 批准。 |
+| 7.1 | 2026-11-25 | F07 通过验收：状态改为在 Troy 的电脑上真跑过。 |

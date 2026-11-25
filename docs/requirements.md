@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "7.0"
+version: "7.1"
 updated: "2026-11-25"
 status: "Approved by Troy on 2026-11-25"
 mirror: "requirements.zh-CN.md"
@@ -58,7 +58,7 @@ To find the length of the longest word outside Python, Troy types `wordcount --l
 | F04 | Word count command | F03 | None | v0.2 | Usable on Troy's devices |
 | F05 | Line count option | F02, F04 | None | v0.3 | Ran for real on Troy's PC |
 | F06 | Character count option | F04 | None | v0.3 | Ran for real on Troy's PC |
-| F07 | Longest word option | F04 | None | v0.3 | Not started |
+| F07 | Longest word option | F04 | None | v0.3 | Ran for real on Troy's PC |
 
 ### 4.1 What each feature does
 
@@ -159,3 +159,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 6.2 | 2026-11-23 | F05 accepted: its status is now Ran for real on Troy's PC. |
 | 6.3 | 2026-11-25 | The new feature F07, Longest word option: `wordcount --longest FILE` prints the length, in characters, of the longest word of one UTF-8 text file, with words as F03 counts them, and 0 for a file with no word. F04 is accepted and does not change, so F07 is a new feature with a hard dependency on F04 only, right after F04 in the order (F01, F03, F04, F07, F06, F02, F05), in v0.3 beside F05 and F06. Its prototype is `docs/prototypes/F07-longest-word-option.md`. Section 8 allows the `--longest` option. New questions Q14 to Q16. F01 to F06 do not change. |
 | 7.0 | 2026-11-25 | Approved by Troy. |
+| 7.1 | 2026-11-25 | F07 accepted: its status is now Ran for real on Troy's PC. |
