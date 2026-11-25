@@ -80,6 +80,41 @@ def count_lines(path: str | os.PathLike[str]) -> int:
     return breaks + (1 if text and not text.endswith("\n") else 0)
 
 
+def count_longest(path: str | os.PathLike[str]) -> int:
+    """Find the length of the longest word in one UTF-8 text file.
+
+    The function decodes the whole file and removes one byte order mark
+    (U+FEFF) at the start of the file. It splits the text into words exactly as
+    `count_words` does, with the same word rule and the same file reading. The
+    length counts Unicode code points, so a word that is several code points
+    counts once for each, and punctuation in a word counts. A run with no
+    letter or digit, such as `--`, is not a word, and its length never counts.
+    A U+FEFF anywhere else is part of the run it is in.
+
+    The mock raises ``NotImplementedError``.
+
+    Args:
+        path: The path of the file to read, absolute or relative to the
+            current working directory. It names one existing, readable,
+            regular file whose content is valid UTF-8. `bytes` paths are not
+            accepted.
+
+    Returns:
+        The greatest length, in code points, of a word in the file, 0 or more.
+        A file with no word returns 0, so `count_words(path)` is 0 exactly when
+        this is 0.
+
+    Raises:
+        FileNotFoundError: No file exists at `path`, or `path` is empty.
+        IsADirectoryError: `path` names a folder (Linux).
+        PermissionError: `path` names a folder (Windows), or the process may
+            not read the file.
+        UnicodeDecodeError: Any byte of the file is not valid UTF-8.
+        TypeError: `path` is neither a `str` nor an `os.PathLike[str]`.
+    """
+    raise NotImplementedError
+
+
 def count_words(path: str | os.PathLike[str]) -> int:
     """Count the words in one UTF-8 text file.
 
