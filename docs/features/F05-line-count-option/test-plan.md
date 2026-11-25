@@ -1,8 +1,8 @@
 ---
 troy-doc: "F05-test-plan"
 lang: "en"
-version: "0.1"
-updated: "2026-11-23"
+version: "0.2"
+updated: "2026-11-25"
 status: "Draft. Being aligned with the Interface Designer."
 mirror: "test-plan.zh-CN.md"
 ---
@@ -28,9 +28,10 @@ Each test makes its own files in `tmp_path` and writes them in binary mode, as t
 **The usage line depends on whether F06's code has landed.** F06 is built at the same time, and design section 2.1, in its landing-order paragraph, gives the usage line for both orders. `<USAGE>` in this plan is:
 
 - `usage: wordcount [--lines] FILE` while F06's code is not on the branch under test, so `--chars` is an unknown option.
-- `usage: wordcount [--lines | --chars] FILE` once F06's code is on that branch.
+- `usage: wordcount [--lines | --chars] FILE` once F06's code is on that branch, while F07's code is not.
+- `usage: wordcount [--lines | --chars | --longest] FILE` once F07's code is on that branch too. F07 adds `--longest` to the same set of options (F07 design section 3, item 2). F06's code is on `main` before F07's, so this line always comes with `--chars`.
 
-A case that checks a usage line first asks the command which state holds, through the same interface it tests, and throws away the output of that call. A `main` case calls `main(["--chars", "notes.txt"])`: if it returns `0`, F06's code has landed; if it raises `SystemExit` with code `2`, it has not. A `wordcount` case runs `wordcount --chars notes.txt` in the same way: exit code 0 means F06's code has landed, and exit code 2 means it has not. The case then expects the exact line of that state. This keeps every case exact in both landing orders. A fixed line would not work: once F05 is accepted, its tests must pass in every PR (R10), and if F06's code lands second, F06's implementation PR changes the usage line but may not change tests (R08).
+A case that checks a usage line first asks the command which state holds, through the same interface it tests, and throws away the output of that call. A `main` case calls `main(["--chars", "notes.txt"])`: if it returns `0`, F06's code has landed; if it raises `SystemExit` with code `2`, it has not. A `wordcount` case runs `wordcount --chars notes.txt` in the same way: exit code 0 means F06's code has landed, and exit code 2 means it has not. It then asks for F07's state in the same way: `main(["--longest", "notes.txt"])` returns `0` once F07's code has landed and raises `SystemExit` with code `2` while it has not, and `wordcount --longest notes.txt` exits with code 0 or 2. Any other outcome of either probe fails the case. The case then expects the exact line of that state. `--longest` changes no second line that these cases expect. This keeps every case exact in both landing orders, and before and after F07's code. A fixed line would not work: once F05 is accepted, its tests must pass in every PR (R10), and if F06's code lands second, F06's implementation PR changes the usage line but may not change tests (R08).
 
 "Usage error" means: `main` raises `SystemExit` whose `code` is `2`, or the program exits with code 2, and standard output is empty, and standard error holds exactly two lines, the first exactly `<USAGE>` and the second starting with `wordcount: error: `.
 
@@ -86,10 +87,11 @@ None. Design 2.1 and 2.2 set no performance target, and requirements 7.1 sets no
 
 ## 5. Alignment with the Interface Designer
 
-None. The design answered every question this plan raised. Its landing-order paragraph gives the usage line and the meaning of `--chars` for both orders, so section 2 checks the line of whichever state the branch is in. The Architect's note in design section 4 asked that whichever of F05 and F06 lands its test PR second update the expected usage line. For F04's cases, F06's test-plan PR now checks only the start of the usage line, so no F05 PR changes them. For F05's own cases, the state check of section 2 gives the right line in both orders, so no later PR needs to change them.
+None. The design answered every question this plan raised. Its landing-order paragraph gives the usage line and the meaning of `--chars` for both orders, so section 2 checks the line of whichever state the branch is in. The Architect's note in design section 4 asked that whichever of F05 and F06 lands its test PR second update the expected usage line. For F04's cases, F06's test-plan PR now checks only the start of the usage line, so no F05 PR changes them. For F05's own cases, the state check of section 2 gives the right line in both orders, so no later PR needs to change them. F07 changes the usage line again. The Architect's note in F07 design section 4 asked that F05-T13, F05-T14, F05-T15, and F05-T23 pass before and after F07's code, so version 0.2 adds F07's state to section 2. F07's test PR adds that probe to the four cases, which keep their names, and changes nothing else in them.
 
 ## 6. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-11-23 | First draft. |
+| 0.2 | 2026-11-25 | F07 adds `--longest` to the usage line. `<USAGE>` gains a third state, `usage: wordcount [--lines \| --chars \| --longest] FILE`, once F07's code is on the branch, found by a probe with `--longest` in the way the cases find F06's state. This changes the expected first line of F05-T13, F05-T14, F05-T15, and F05-T23, and nothing else, so they pass before and after F07's code (R10). |
