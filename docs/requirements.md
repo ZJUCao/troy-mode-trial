@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "6.2"
-updated: "2026-11-23"
-status: "Approved by Troy on 2026-11-23"
+version: "7.0"
+updated: "2026-11-25"
+status: "Approved by Troy on 2026-11-25"
 mirror: "requirements.zh-CN.md"
 ---
 
@@ -11,7 +11,7 @@ mirror: "requirements.zh-CN.md"
 
 ## 1. Goal
 
-troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts, and runs its `wordcount` command in PowerShell. Version 0.1 counts the words of one file. Version 0.2 adds the `wordcount` command and also counts the lines of a file. Version 0.3 adds the `--lines` and `--chars` options, so `wordcount` can also print the lines or the characters of a file.
+troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts, and runs its `wordcount` command in PowerShell. Version 0.1 counts the words of one file. Version 0.2 adds the `wordcount` command and also counts the lines of a file. Version 0.3 adds the `--lines`, `--chars`, and `--longest` options, so `wordcount` can also print the lines or the characters of a file, or the length of its longest word.
 
 ## 2. Users
 
@@ -19,7 +19,7 @@ Troy is the only user. Troy runs the scripts that call the library on Windows 11
 
 ## 3. How users interact with it
 
-The library has functions, and one command-line program, `wordcount` (F04, with the `--lines` option of F05 and the `--chars` option of F06).
+The library has functions, and one command-line program, `wordcount` (F04, with the `--lines` option of F05, the `--chars` option of F06, and the `--longest` option of F07).
 
 1. Troy imports `troy_mode_trial` in a Python script or session.
 2. Troy calls a counting function with the path of one UTF-8 text file.
@@ -34,6 +34,8 @@ To count lines outside Python, Troy types `wordcount --lines FILE`. The command 
 
 To count characters outside Python, Troy types `wordcount --chars FILE`. The command prints the number of characters of the file's decoded text, line ends included, instead of its words. A file error gives the same message and exit code as `wordcount FILE`.
 
+To find the length of the longest word outside Python, Troy types `wordcount --longest FILE`. The command prints the length, in characters, of the longest word in the file, with words as F03 counts them, instead of the number of words. A file with no word prints 0. A file error gives the same message and exit code as `wordcount FILE`.
+
 ### 3.1 Prototypes
 
 | Prototype | Feature | File |
@@ -44,6 +46,7 @@ To count characters outside Python, Troy types `wordcount --chars FILE`. The com
 | Count words in PowerShell | F04 | `docs/prototypes/F04-word-count-command.md` |
 | Count lines in PowerShell | F05 | `docs/prototypes/F05-line-count-option.md` |
 | Count characters in PowerShell | F06 | `docs/prototypes/F06-character-count-option.md` |
+| Find the longest word in PowerShell | F07 | `docs/prototypes/F07-longest-word-option.md` |
 
 ## 4. Features
 
@@ -55,6 +58,7 @@ To count characters outside Python, Troy types `wordcount --chars FILE`. The com
 | F04 | Word count command | F03 | None | v0.2 | Usable on Troy's devices |
 | F05 | Line count option | F02, F04 | None | v0.3 | Ran for real on Troy's PC |
 | F06 | Character count option | F04 | None | v0.3 | Ran for real on Troy's PC |
+| F07 | Longest word option | F04 | None | v0.3 | Not started |
 
 ### 4.1 What each feature does
 
@@ -64,10 +68,11 @@ To count characters outside Python, Troy types `wordcount --chars FILE`. The com
 - **F04 Word count command.** Gives Troy a `wordcount FILE` command in PowerShell. It prints the number of words in one UTF-8 text file, counted as F03 counts them, so Troy can count words outside Python. If the file is missing, it prints an error that names the file, and its exit code is not 0.
 - **F05 Line count option.** Adds the `--lines` option to `wordcount`: `wordcount --lines FILE` prints the number of lines in one UTF-8 text file, counted as F02 counts them, instead of its words. `wordcount FILE` without the option still prints the words. A missing file gives the same error and exit code as `wordcount FILE`.
 - **F06 Character count option.** Adds the `--chars` option to `wordcount`: `wordcount --chars FILE` prints the number of characters of one UTF-8 text file instead of its words. It counts the characters of the file's decoded text, line ends included: a character is one Unicode code point, so `你` is one character, not three bytes, and a Windows line end `\r\n` is two characters. A byte order mark at the start of the file is not counted (Q12). A missing file, or a file that is not valid UTF-8, gives the same error message and exit code as `wordcount FILE`.
+- **F07 Longest word option.** Adds the `--longest` option to `wordcount`: `wordcount --longest FILE` prints the length, in characters, of the longest word of one UTF-8 text file instead of its number of words. A word is what F03 counts as a word, the whole run of characters that are not white space, so `don't,` is 6 characters long (Q15). A character is one Unicode code point, as for `--chars`, so `世界!` is 3 characters long. A file with no word, such as an empty file or a file of only `--` and `...`, prints 0. A byte order mark at the start of the file is not part of a word (Q5). A missing file, or a file that is not valid UTF-8, gives the same error message and exit code as `wordcount FILE`.
 
 ## 5. Dependency graph and order
 
-F03 changes F01's word, so F03 has a hard dependency on F01. F04 counts words as F03 counts them, so F04 has a hard dependency on F03. F02 depends on none of them. F05 adds an option to F04's command and counts lines as F02 counts them, so F05 has a hard dependency on F02 and on F04. F06 adds an option to F04's command and needs no other feature, so F06 has a hard dependency on F04 only. F05 and F06 do not depend on each other, so they can be built at the same time.
+F03 changes F01's word, so F03 has a hard dependency on F01. F04 counts words as F03 counts them, so F04 has a hard dependency on F03. F02 depends on none of them. F05 adds an option to F04's command and counts lines as F02 counts them, so F05 has a hard dependency on F02 and on F04. F06 adds an option to F04's command and needs no other feature, so F06 has a hard dependency on F04 only. F07 adds an option to F04's command and finds words as F04 counts them, so F07 has a hard dependency on F04 only. F05, F06, and F07 do not depend on each other.
 
 ```mermaid
 flowchart LR
@@ -76,9 +81,10 @@ flowchart LR
   F04 --> F05
   F02 --> F05
   F04 --> F06
+  F04 --> F07
 ```
 
-Topological order: F01, F03, F04, F06, F02, F05
+Topological order: F01, F03, F04, F07, F06, F02, F05
 
 ## 6. Version plan
 
@@ -86,7 +92,7 @@ Topological order: F01, F03, F04, F06, F02, F05
 | --- | --- | --- |
 | v0.1 | F01, F03 | Troy's scripts can count the words of a UTF-8 text file, where a word holds at least one letter or digit. |
 | v0.2 | F04, F02 | Troy can count the words of a UTF-8 text file with the `wordcount` command in PowerShell, and Troy's scripts can also count the lines of a UTF-8 text file. |
-| v0.3 | F05, F06 | Troy can count the lines of a UTF-8 text file with `wordcount --lines`, and its characters with `wordcount --chars`, in PowerShell. |
+| v0.3 | F05, F06, F07 | Troy can count the lines of a UTF-8 text file with `wordcount --lines`, count its characters with `wordcount --chars`, and find the length of its longest word with `wordcount --longest`, in PowerShell. |
 
 ## 7. Non-functional requirements
 
@@ -104,7 +110,7 @@ None
 
 - Encodings other than UTF-8.
 - Counting a folder of files, or several files in one call.
-- Any command-line program other than `wordcount`, any `wordcount` option other than `--lines` and `--chars`, two counting options in one command, and a second file argument.
+- Any command-line program other than `wordcount`, any `wordcount` option other than `--lines`, `--chars`, and `--longest`, two of these options in one command, printing the longest word itself, and a second file argument.
 
 ## 9. Open questions
 
@@ -125,6 +131,9 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | Q11 | How many characters is a Windows line end `\r\n`? | Two, as the file holds them. `wordcount --chars` counts the decoded text as it is, with no line-end translation, so the same file gives the same count on Windows and on Linux. | Decided by Troy on 2026-11-23: as proposed ("全按推荐"). |
 | Q12 | Does a byte order mark at the start of the file count as a character? | No, as for words (Q5). | Decided by Troy on 2026-11-23: as proposed ("全按推荐"). |
 | Q13 | What does `wordcount --lines --chars FILE` do? | A usage error with exit code 2, as for any other wrong command line: one command prints one count. | Decided by Troy on 2026-11-23: as proposed ("全按推荐"). |
+| Q14 | Does F07's option also get a short form, such as `-L`? | No. Only `--longest`, as for `--lines` and `--chars` (Q7, Q10). | Decided by Troy on 2026-11-25: as proposed ("全按推荐"). |
+| Q15 | Does punctuation that touches a word count toward its length, as the comma in `don't,` does? | Yes. The word is the whole run that F03 counts, so `wordcount --longest` and `wordcount` agree on what a word is. | Decided by Troy on 2026-11-25: as proposed ("全按推荐"). |
+| Q16 | What does `wordcount --longest` together with `--lines` or `--chars` do? | A usage error with exit code 2, as for `--lines --chars` (Q13). | Decided by Troy on 2026-11-25: as proposed ("全按推荐"). |
 
 ## 10. Change log
 
@@ -148,3 +157,5 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 6.0 | 2026-11-23 | Approved by Troy. |
 | 6.1 | 2026-11-23 | F06 accepted: its status is now Ran for real on Troy's PC. |
 | 6.2 | 2026-11-23 | F05 accepted: its status is now Ran for real on Troy's PC. |
+| 6.3 | 2026-11-25 | The new feature F07, Longest word option: `wordcount --longest FILE` prints the length, in characters, of the longest word of one UTF-8 text file, with words as F03 counts them, and 0 for a file with no word. F04 is accepted and does not change, so F07 is a new feature with a hard dependency on F04 only, right after F04 in the order (F01, F03, F04, F07, F06, F02, F05), in v0.3 beside F05 and F06. Its prototype is `docs/prototypes/F07-longest-word-option.md`. Section 8 allows the `--longest` option. New questions Q14 to Q16. F01 to F06 do not change. |
+| 7.0 | 2026-11-25 | Approved by Troy. |
