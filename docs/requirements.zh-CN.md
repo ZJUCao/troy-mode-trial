@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "7.1"
-updated: "2026-11-25"
-status: "Troy 已于 2026-11-25 批准"
+version: "8.0"
+updated: "2026-11-26"
+status: "Troy 已于 2026-11-26 批准"
 mirror-of: "requirements.md"
 ---
 
@@ -11,7 +11,7 @@ mirror-of: "requirements.md"
 
 ## 1. 目标
 
-troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里的内容。Troy 在自己的脚本里调用它，也在 PowerShell 里运行它的 `wordcount` 命令。0.1 版统计一个文件的词数，0.2 版加上 `wordcount` 命令，并统计一个文件的行数。0.3 版加上 `--lines`、`--chars` 和 `--longest` 选项，让 `wordcount` 也能打印一个文件的行数、字符数，或其中最长的词的长度。
+troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里的内容。Troy 在自己的脚本里调用它，也在 PowerShell 里运行它的 `wordcount` 命令。0.1 版统计一个文件的词数，0.2 版加上 `wordcount` 命令，并统计一个文件的行数。0.3 版加上 `--lines`、`--chars`、`--longest` 和 `--sentences` 选项，让 `wordcount` 也能打印一个文件的行数、字符数、句子数，或其中最长的词的长度；还加上 `--again` 选项，用上一次运行的选项再运行 `wordcount`。
 
 ## 2. 用户
 
@@ -19,7 +19,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 
 ## 3. 用户如何使用
 
-这个库提供函数，以及一个命令行程序 `wordcount`（F04，以及 F05 的 `--lines` 选项、F06 的 `--chars` 选项和 F07 的 `--longest` 选项）。
+这个库提供函数，以及一个命令行程序 `wordcount`（F04，以及 F05 的 `--lines` 选项、F06 的 `--chars` 选项、F07 的 `--longest` 选项、F08 的 `--again` 选项和 F09 的 `--sentences` 选项）。
 
 1. Troy 在 Python 脚本或会话里导入 `troy_mode_trial`。
 2. Troy 调用一个计数函数，传入一个 UTF-8 文本文件的路径。
@@ -36,6 +36,10 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 
 要在 Python 之外找出最长的词有多长，Troy 输入 `wordcount --longest FILE`。命令打印文件里最长的词的长度（按字符计），词按 F03 的方式划分，而不是词数。文件里没有词时打印 0。文件出错时，错误信息和退出码与 `wordcount FILE` 相同。
 
+要在 Python 之外统计句子数，Troy 输入 `wordcount --sentences FILE`。命令打印文件里的句子数，而不是词数。一个句子是以 `.`、`!` 或 `?` 结尾的一段文字。文件出错时，错误信息和退出码与 `wordcount FILE` 相同。
+
+要用上一次运行的选项统计一个文件，Troy 输入 `wordcount --again FILE`。每次打印出计数的运行，都把它的选项（或没有选项这件事）保存在 Troy 数据文件夹里的一个设置文件中，`--again` 就用这个选项统计 FILE。在还没有这样的运行之前，`wordcount --again` 打印一条错误，退出码为 2。
+
 ### 3.1 原型
 
 | 原型 | 功能 | 文件 |
@@ -47,6 +51,8 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | 在 PowerShell 里统计行数 | F05 | `docs/prototypes/F05-line-count-option.md` |
 | 在 PowerShell 里统计字符数 | F06 | `docs/prototypes/F06-character-count-option.md` |
 | 在 PowerShell 里找出最长的词 | F07 | `docs/prototypes/F07-longest-word-option.md` |
+| 在 PowerShell 里用上一次的选项再运行 | F08 | `docs/prototypes/F08-remember-the-last-options.md` |
+| 在 PowerShell 里统计句子数 | F09 | `docs/prototypes/F09-count-sentences-option.md` |
 
 ## 4. 功能点
 
@@ -59,6 +65,8 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F05 | Line count option | F02, F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 | F06 | Character count option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 | F07 | Longest word option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
+| F08 | Remember the last options | F04 | 无 | v0.3 | 未开始 |
+| F09 | Count sentences option | F04 | 无 | v0.3 | 未开始 |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -71,10 +79,12 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 - **F05 Line count option（行数选项）。** 给 `wordcount` 加上 `--lines` 选项：`wordcount --lines FILE` 打印一个 UTF-8 文本文件里的行数，按 F02 的方式计数，而不是词数。不带选项的 `wordcount FILE` 仍然打印词数。文件不存在时，错误和退出码与 `wordcount FILE` 相同。
 - **F06 Character count option（字符数选项）。** 给 `wordcount` 加上 `--chars` 选项：`wordcount --chars FILE` 打印一个 UTF-8 文本文件的字符数，而不是词数。它统计文件解码后的文本里的字符，换行符也算：一个字符是一个 Unicode 码位，所以 `你` 是一个字符，不是三个字节；Windows 的换行 `\r\n` 是两个字符。文件开头的字节顺序标记不算（Q12）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。
 - **F07 Longest word option（最长词选项）。** 给 `wordcount` 加上 `--longest` 选项：`wordcount --longest FILE` 打印一个 UTF-8 文本文件里最长的词的长度（按字符计），而不是词数。词就是 F03 算作词的东西，即整串连续的非空白字符，所以 `don't,` 长 6 个字符（Q15）。一个字符是一个 Unicode 码位，与 `--chars` 一样，所以 `世界!` 长 3 个字符。没有词的文件，例如空文件或只有 `--` 和 `...` 的文件，打印 0。文件开头的字节顺序标记不算词的一部分（Q5）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。
+- **F08 Remember the last options（记住上一次的选项）。** 给 `wordcount` 加上 `--again` 选项。每次打印出计数的 `wordcount` 运行，都把它的选项（或没有选项这件事）写进用户数据文件夹里的一个设置文件（Q17）：Windows 上是 `%APPDATA%\wordcount\settings.json`，Linux 上是 `$XDG_DATA_HOME/wordcount/settings.json`，没有设置 `XDG_DATA_HOME` 时是 `~/.local/share/wordcount/settings.json`。这个文件只保存那个选项，从不保存文件名或文件内容（Q18）。`wordcount --again FILE` 用保存的选项统计 FILE：运行 `wordcount --lines a.txt` 之后，`wordcount --again b.txt` 打印 `b.txt` 的行数；运行 `wordcount a.txt` 之后，它打印词数。失败的运行，例如文件不存在或用法错误，不改动设置（Q19）。没有保存的选项，或设置文件读不出来时，`--again` 打印一条写明设置文件的错误，退出码为 2（Q20）。`--again` 和计数选项一起用，例如 `--again --lines`，是用法错误，退出码为 2（Q21）。设置文件写不进去时，计数照样打印，一条写明设置文件的警告输出到错误输出，退出码为 0（Q22）。
+- **F09 Count sentences option（句子数选项）。** 给 `wordcount` 加上 `--sentences` 选项：`wordcount --sentences FILE` 打印一个 UTF-8 文本文件里的句子数，而不是词数。一个句子是以 `.`、`!` 或 `?` 结尾的一段文字。连在一起的几个标点，例如 `...` 或 `?!`，只结束一个句子（Q23）。一个句子至少含一个字母或数字，与 F03 的词一样，所以只有 `-- ...` 的文件有 0 个句子（Q24）。最后一个标点之后的文字不算句子，所以 `Done. Not yet` 有 1 个句子（Q25）。标点在哪里都结束句子，在数字或缩写里也一样，所以 `Pi is 3.14.` 有 2 个句子。只有 `.`、`!` 和 `?` 结束句子，中文的 `。`、`！` 和 `？` 不算（Q26）。文件开头的字节顺序标记被忽略（Q5）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。`--sentences` 和别的计数选项一起用是用法错误，退出码为 2，与 `--lines --chars` 一样（Q13）。
 
 ## 5. 依赖图和顺序
 
-F03 修改 F01 对词的定义，所以 F03 硬依赖 F01。F04 按 F03 的方式计数，所以 F04 硬依赖 F03。F02 不依赖其他功能。F05 给 F04 的命令加选项，并按 F02 的方式数行，所以 F05 硬依赖 F02 和 F04。F06 给 F04 的命令加选项，不需要其他功能，所以 F06 只硬依赖 F04。F07 给 F04 的命令加选项，并按 F04 的方式划分词，所以 F07 只硬依赖 F04。F05、F06 和 F07 互不依赖。
+F03 修改 F01 对词的定义，所以 F03 硬依赖 F01。F04 按 F03 的方式计数，所以 F04 硬依赖 F03。F02 不依赖其他功能。F05 给 F04 的命令加选项，并按 F02 的方式数行，所以 F05 硬依赖 F02 和 F04。F06 给 F04 的命令加选项，不需要其他功能，所以 F06 只硬依赖 F04。F07 给 F04 的命令加选项，并按 F04 的方式划分词，所以 F07 只硬依赖 F04。F08 给 F04 的命令加一个重复上一次运行选项的选项，所以 F08 只硬依赖 F04。F09 给 F04 的命令加一个选项，不需要其他功能，所以 F09 只硬依赖 F04。F05 到 F09 互不依赖。顺序上新功能排在已验收的功能之后，F08 在 F09 之前，所以 F09 的设计要让 `--again` 也记住 `--sentences`（Troy 于 2026-11-26 的选择）。
 
 ```mermaid
 flowchart LR
@@ -84,9 +94,11 @@ flowchart LR
   F02 --> F05
   F04 --> F06
   F04 --> F07
+  F04 --> F08
+  F04 --> F09
 ```
 
-拓扑顺序：F01, F03, F04, F07, F06, F02, F05
+拓扑顺序：F01, F03, F04, F07, F06, F02, F05, F08, F09
 
 ## 6. 版本计划
 
@@ -94,14 +106,14 @@ flowchart LR
 | --- | --- | --- |
 | v0.1 | F01, F03 | Troy 的脚本可以统计一个 UTF-8 文本文件的词数，其中每个词至少含一个字母或数字。 |
 | v0.2 | F04, F02 | Troy 可以在 PowerShell 里用 `wordcount` 命令统计一个 UTF-8 文本文件的词数，Troy 的脚本还可以统计一个 UTF-8 文本文件的行数。 |
-| v0.3 | F05, F06, F07 | Troy 可以在 PowerShell 里用 `wordcount --lines` 统计一个 UTF-8 文本文件的行数，用 `wordcount --chars` 统计它的字符数，用 `wordcount --longest` 找出它最长的词有多长。 |
+| v0.3 | F05, F06, F07, F08, F09 | Troy 可以在 PowerShell 里用 `wordcount --lines` 统计一个 UTF-8 文本文件的行数，用 `wordcount --chars` 统计它的字符数，用 `wordcount --longest` 找出它最长的词有多长，用 `wordcount --sentences` 统计它的句子数，用 `wordcount --again` 以上一次运行的选项统计另一个文件。 |
 
 ## 7. 非功能需求
 
 - 这个库在 Python 3.13 上运行。
 - 这个库只用 Python 标准库，运行时没有第三方依赖。
 - 这个库在 Windows 11 和 Linux 上都能运行，同一个文件在两个系统上的计数相同。
-- 这个库只读文件，从不写入、发送或保存数据。
+- 这个库只读文件。`wordcount` 命令只写一个文件，即用户数据文件夹里它的设置文件（F08），其中只保存上一次运行的选项。不向任何地方发送数据。
 - 这个库只按 UTF-8 读取文本。
 
 ### 7.1 性能指标
@@ -112,7 +124,9 @@ flowchart LR
 
 - UTF-8 以外的编码。
 - 统计一个文件夹里的文件，或一次调用统计多个文件。
-- `wordcount` 以外的命令行程序，`--lines`、`--chars` 和 `--longest` 以外的任何 `wordcount` 选项，一条命令里同时用其中两个选项，打印最长的词本身，以及第二个文件参数。
+- `wordcount` 以外的命令行程序，`--lines`、`--chars`、`--longest`、`--sentences` 和 `--again` 以外的任何 `wordcount` 选项，一条命令里同时用两个计数选项，打印最长的词本身，以及第二个文件参数。
+- 保存上一次运行的选项以外的任何东西，例如以前运行过的文件，或不止一次运行。
+- 把数字和缩写里的点与句子结尾区分开，以及 `.`、`!`、`?` 以外的句末标点。
 
 ## 9. 待定问题
 
@@ -136,6 +150,16 @@ flowchart LR
 | Q14 | F07 的选项要不要再加一个短写法，例如 `-L`？ | 不要。只有 `--longest`，与 `--lines` 和 `--chars` 一样（Q7、Q10）。 | Troy 于 2026-11-25 决定：按提议（“全按推荐”）。 |
 | Q15 | 紧贴在词上的标点算不算词的长度，例如 `don't,` 里的逗号？ | 算。词就是 F03 数的整串字符，这样 `wordcount --longest` 和 `wordcount` 对“词”的理解一致。 | Troy 于 2026-11-25 决定：按提议（“全按推荐”）。 |
 | Q16 | `wordcount --longest` 和 `--lines` 或 `--chars` 一起用会怎样？ | 用法错误，退出码 2，与 `--lines --chars` 一样（Q13）。 | Troy 于 2026-11-25 决定：按提议（“全按推荐”）。 |
+| Q17 | F08 的设置文件放在哪里？ | Windows 上是 `%APPDATA%\wordcount\settings.json`；Linux 上是 `$XDG_DATA_HOME/wordcount/settings.json`，没有 `XDG_DATA_HOME` 时是 `~/.local/share/wordcount/settings.json`。这是两个系统通常的数据文件夹。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q18 | 设置文件保存什么？ | 只保存上一次运行的选项，或没有选项这件事。从不保存文件名或文件内容，所以它不透露 Troy 的任何文件。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q19 | 失败的运行（例如文件不存在）会改动设置吗？ | 不会。只有打印出计数的运行才保存它的选项。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q20 | 还没有保存选项，或设置文件读不出来时，`wordcount --again` 怎么做？ | 打印一条写明设置文件的错误，退出码为 2。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q21 | `--again` 和计数选项一起用（例如 `--again --lines`）会怎样？ | 用法错误，退出码 2，与两个计数选项一起用一样（Q13）。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q22 | 设置文件写不进去时会怎样？ | 计数照样打印，一条写明设置文件的警告输出到错误输出，退出码为 0：Troy 要的计数更重要。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q23 | 连在一起的几个标点（例如 `...` 或 `?!`）结束一个句子还是几个？ | 一个。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q24 | 句子必须含字母或数字吗？ | 是，与 F03 的词一样，所以只有标点（例如 `-- ...`）不是句子。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q25 | 最后一个标点之后的文字，例如 `Done. Not yet` 里的 `Not yet`，算句子吗？ | 不算，按 Troy 的定义：句子以标点结尾。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q26 | 中文的 `。`、`！` 和 `？` 结束句子吗？ | 不。只有 `.`、`!` 和 `?`，按 Troy 的要求；中文标点以后可以作为单独的修改加上。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
 
 ## 10. 修改记录
 
@@ -162,3 +186,5 @@ flowchart LR
 | 6.3 | 2026-11-25 | 新功能 F07，Longest word option：`wordcount --longest FILE` 打印一个 UTF-8 文本文件里最长的词的长度（按字符计），词按 F03 的方式划分，没有词的文件打印 0。F04 已经验收，保持不变，所以 F07 是新功能，只硬依赖 F04，在顺序里紧跟 F04（F01, F03, F04, F07, F06, F02, F05），与 F05 和 F06 同属 v0.3。它的原型是 `docs/prototypes/F07-longest-word-option.md`。第 8 节允许 `--longest` 选项。新增问题 Q14 到 Q16。F01 到 F06 不变。 |
 | 7.0 | 2026-11-25 | Troy 批准。 |
 | 7.1 | 2026-11-25 | F07 通过验收：状态改为在 Troy 的电脑上真跑过。 |
+| 7.2 | 2026-11-26 | v0.3 在 F05 到 F07 之外加两个新功能，各自只硬依赖 F04：F08，Remember the last options（`wordcount --again FILE` 用上一次运行的选项统计，选项保存在用户数据文件夹里的设置文件中）；F09，Count sentences option（`wordcount --sentences FILE` 打印句子数）。F04 已通过验收，不变。顺序是 F01, F03, F04, F07, F06, F02, F05, F08, F09。它们的原型是 `docs/prototypes/F08-remember-the-last-options.md` 和 `docs/prototypes/F09-count-sentences-option.md`。第 7 节允许命令写它的设置文件，第 8 节允许这两个选项。新增问题 Q17 到 Q26。F01 到 F07 不变。 |
+| 8.0 | 2026-11-26 | Troy 批准。 |
