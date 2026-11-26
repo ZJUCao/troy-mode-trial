@@ -84,8 +84,9 @@ effort = "medium"
 [flow]
 # Troy's decision on 2026-11-16 (D62): "Keep approving PR 1 and PR 2 of the next feature too: set troy_approves_first to 4."
 # Troy's decision on 2026-11-26: back to 7, the number of features accepted when spot checks were turned on (F18 design 7.4). The engine no longer asks to record approvals that accepted features lack.
-troy_approves_first = 7
+# Troy overturned the spot check of #104 on 2026-11-26 (issue #103): spot checks turn off, and every later PR 1 and PR 2 waits for Troy again.
+troy_approves_first = 10
 # Troy's decision on 2026-11-26 (D62): turn on spot checks after the merge for later PR 1 and PR 2, every 2nd feature, knowing the evidence is not complete.
-spot_checks = true
+spot_checks = false
 # Troy's decision on 2026-11-26: sample every 3rd feature instead of every 2nd, so that F10 is in the sample.
 spot_check_every = 3
