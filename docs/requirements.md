@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "9.0"
+version: "9.1"
 updated: "2026-11-26"
-status: "Approved by Troy on 2026-11-26"
+status: "Waiting for Troy's approval"
 mirror: "requirements.zh-CN.md"
 ---
 
@@ -70,7 +70,7 @@ To count a file with the option of the last run, Troy types `wordcount --again F
 | F07 | Longest word option | F04 | None | v0.3 | Ran for real on Troy's PC |
 | F08 | Remember the last options | F04 | None | v0.3 | Not started |
 | F09 | Count sentences option | F04 | None | v0.3 | Not started |
-| F10 | Count paragraphs function | F04 | None | v0.4 | Not started |
+| F10 | Count paragraphs function | F04 | None | v0.4 | Needs rework (lines of invisible characters are blank) |
 
 ### 4.1 What each feature does
 
@@ -83,7 +83,7 @@ To count a file with the option of the last run, Troy types `wordcount --again F
 - **F07 Longest word option.** Adds the `--longest` option to `wordcount`: `wordcount --longest FILE` prints the length, in characters, of the longest word of one UTF-8 text file instead of its number of words. A word is what F03 counts as a word, the whole run of characters that are not white space, so `don't,` is 6 characters long (Q15). A character is one Unicode code point, as for `--chars`, so `世界!` is 3 characters long. A file with no word, such as an empty file or a file of only `--` and `...`, prints 0. A byte order mark at the start of the file is not part of a word (Q5). A missing file, or a file that is not valid UTF-8, gives the same error message and exit code as `wordcount FILE`.
 - **F08 Remember the last options.** Adds the `--again` option to `wordcount`. Every run of `wordcount` that prints a count writes its option, or that it had none, to one settings file in the user's data folder (Q17): on Windows `%APPDATA%\wordcount\settings.json`, on Linux `$XDG_DATA_HOME/wordcount/settings.json`, or `~/.local/share/wordcount/settings.json` when `XDG_DATA_HOME` is not set. The file holds only that option, never a file's name or text (Q18). `wordcount --again FILE` counts FILE with the saved option: after `wordcount --lines a.txt`, `wordcount --again b.txt` prints the lines of `b.txt`, and after `wordcount a.txt` it prints the words. A run that fails, such as one with a missing file or a usage error, leaves the settings as they were (Q19). `--again` with no saved option, or with a settings file it cannot read, prints an error that names the settings file and exits with code 2 (Q20). `--again` together with a counting option, such as `--again --lines`, is a usage error with exit code 2 (Q21). When the settings file cannot be written, the count still prints, a warning that names the settings file goes to the error output, and the exit code is 0 (Q22).
 - **F09 Count sentences option.** Adds the `--sentences` option to `wordcount`: `wordcount --sentences FILE` prints the number of sentences in one UTF-8 text file instead of its words. A sentence is a run of text that ends in `.`, `!`, or `?`. A run of these marks, such as `...` or `?!`, ends one sentence (Q23). A sentence holds at least one letter or digit, as an F03 word does, so a file of only `-- ...` has 0 sentences (Q24). Text after the last mark is not a sentence, so `Done. Not yet` has 1 sentence (Q25). A mark ends a sentence wherever it stands, also inside a number or an abbreviation, so `Pi is 3.14.` has 2 sentences. Only `.`, `!`, and `?` end a sentence; the Chinese marks `。`, `！`, and `？` do not (Q26). A byte order mark at the start of the file is ignored (Q5). A missing file, or a file that is not valid UTF-8, gives the same error message and exit code as `wordcount FILE`. `--sentences` together with another counting option is a usage error with exit code 2, as for `--lines --chars` (Q13).
-- **F10 Count paragraphs function.** Adds the library function `count_paragraphs(text)`, which returns the number of paragraphs in a text, a Python `str`. A paragraph is a run of lines that are not blank. A blank line is empty or holds only white space, the characters for which `str.isspace()` is true, as in Q1 (Q27). Lines end as F02's lines do: `\n`, `\r\n`, and `\r` each end one line (Q28). Any number of blank lines between two paragraphs separates them once, and blank lines at the start or the end count for nothing. An empty text, or a text of only blank lines, has 0 paragraphs. One `U+FEFF` byte order mark at the start of the text is ignored, as Q5 ignores it in a file (Q29). F10 adds no `wordcount` option, no message, and no file: `wordcount` prints exactly what it printed before.
+- **F10 Count paragraphs function.** Adds the library function `count_paragraphs(text)`, which returns the number of paragraphs in a text, a Python `str`. A paragraph is a run of lines that are not blank. A blank line is empty or holds only white space, the characters for which `str.isspace()` is true, as in Q1 (Q27), and invisible characters, the Unicode format characters such as the zero-width space `U+200B`, so a line that looks empty is blank (Q30). Lines end as F02's lines do: `\n`, `\r\n`, and `\r` each end one line (Q28). Any number of blank lines between two paragraphs separates them once, and blank lines at the start or the end count for nothing. An empty text, or a text of only blank lines, has 0 paragraphs. One `U+FEFF` byte order mark at the start of the text is ignored, as Q5 ignores it in a file (Q29). F10 adds no `wordcount` option, no message, and no file: `wordcount` prints exactly what it printed before.
 
 ## 5. Dependency graph and order
 
@@ -169,6 +169,7 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | Q27 | Is a line of only spaces or tabs blank, so that it separates two paragraphs? | Yes. A blank line is empty or holds only white space, as Q1 defines white space: a line that looks empty is empty. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
 | Q28 | Which line breaks does F10 accept? | `\n`, `\r\n`, and `\r`, as F02 (Q2), so a text from Windows and the same text from Linux give the same count. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
 | Q29 | Does a byte order mark at the start of the text count as text? | No. One `U+FEFF` at the start is ignored, as in a file (Q5), so a text read with a mark gives the same count as without it. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
+| Q30 | Which invisible characters make a line blank, now that Troy decided that a line of only a zero-width space is blank? | Every Unicode format character (category Cf), such as the zero-width space `U+200B`, the zero-width joiner and non-joiner, the word joiner `U+2060`, and `U+FEFF`, together with the white space of Q27. They all show nothing on screen. | Open: Troy decides with this change. |
 
 ## 10. Change log
 
@@ -199,3 +200,4 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 8.0 | 2026-11-26 | Approved by Troy. |
 | 8.1 | 2026-11-26 | The new feature F10, Count paragraphs function: the library function `count_paragraphs(text)` returns the number of paragraphs in a text, where a paragraph is a run of lines that are not blank. It has a hard dependency on F04 only, as Troy asked, comes last in the order (F01, F03, F04, F07, F06, F02, F05, F08, F09, F10), and is the only feature of the new version v0.4. It adds no `wordcount` option, message, or file. Its prototype is `docs/prototypes/F10-count-paragraphs-function.md`. Section 8 rules out paragraphs in files and in `wordcount`. New questions Q27 to Q29. F01 to F09 do not change. |
 | 9.0 | 2026-11-26 | Approved by Troy. |
+| 9.1 | 2026-11-26 | F10's blank line also covers invisible characters: a line of only white space and Unicode format characters, such as the zero-width space, is blank (Q30), as Troy decided when overturning the spot check of F10's design on issue #103. F10 is not accepted, so its status is Needs rework. Its prototype gets an example. F01 to F09 do not change. |

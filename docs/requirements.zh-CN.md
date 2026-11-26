@@ -1,9 +1,9 @@
 ---
 troy-doc: "requirements"
 lang: "zh-CN"
-version: "9.0"
+version: "9.1"
 updated: "2026-11-26"
-status: "Troy 已于 2026-11-26 批准"
+status: "等待 Troy 批准"
 mirror-of: "requirements.md"
 ---
 
@@ -70,7 +70,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 | F07 | Longest word option | F04 | 无 | v0.3 | 在 Troy 的电脑上真跑过 |
 | F08 | Remember the last options | F04 | 无 | v0.3 | 未开始 |
 | F09 | Count sentences option | F04 | 无 | v0.3 | 未开始 |
-| F10 | Count paragraphs function | F04 | 无 | v0.4 | 未开始 |
+| F10 | Count paragraphs function | F04 | 无 | v0.4 | 需要返工（只有看不见字符的行算空行） |
 
 功能列保留英文短名，因为它就是 PR 标题和功能文件夹的名字。
 
@@ -85,7 +85,7 @@ troy-mode-trial 是一个小型 Python 库，用来统计 UTF-8 文本文件里�
 - **F07 Longest word option（最长词选项）。** 给 `wordcount` 加上 `--longest` 选项：`wordcount --longest FILE` 打印一个 UTF-8 文本文件里最长的词的长度（按字符计），而不是词数。词就是 F03 算作词的东西，即整串连续的非空白字符，所以 `don't,` 长 6 个字符（Q15）。一个字符是一个 Unicode 码位，与 `--chars` 一样，所以 `世界!` 长 3 个字符。没有词的文件，例如空文件或只有 `--` 和 `...` 的文件，打印 0。文件开头的字节顺序标记不算词的一部分（Q5）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。
 - **F08 Remember the last options（记住上一次的选项）。** 给 `wordcount` 加上 `--again` 选项。每次打印出计数的 `wordcount` 运行，都把它的选项（或没有选项这件事）写进用户数据文件夹里的一个设置文件（Q17）：Windows 上是 `%APPDATA%\wordcount\settings.json`，Linux 上是 `$XDG_DATA_HOME/wordcount/settings.json`，没有设置 `XDG_DATA_HOME` 时是 `~/.local/share/wordcount/settings.json`。这个文件只保存那个选项，从不保存文件名或文件内容（Q18）。`wordcount --again FILE` 用保存的选项统计 FILE：运行 `wordcount --lines a.txt` 之后，`wordcount --again b.txt` 打印 `b.txt` 的行数；运行 `wordcount a.txt` 之后，它打印词数。失败的运行，例如文件不存在或用法错误，不改动设置（Q19）。没有保存的选项，或设置文件读不出来时，`--again` 打印一条写明设置文件的错误，退出码为 2（Q20）。`--again` 和计数选项一起用，例如 `--again --lines`，是用法错误，退出码为 2（Q21）。设置文件写不进去时，计数照样打印，一条写明设置文件的警告输出到错误输出，退出码为 0（Q22）。
 - **F09 Count sentences option（句子数选项）。** 给 `wordcount` 加上 `--sentences` 选项：`wordcount --sentences FILE` 打印一个 UTF-8 文本文件里的句子数，而不是词数。一个句子是以 `.`、`!` 或 `?` 结尾的一段文字。连在一起的几个标点，例如 `...` 或 `?!`，只结束一个句子（Q23）。一个句子至少含一个字母或数字，与 F03 的词一样，所以只有 `-- ...` 的文件有 0 个句子（Q24）。最后一个标点之后的文字不算句子，所以 `Done. Not yet` 有 1 个句子（Q25）。标点在哪里都结束句子，在数字或缩写里也一样，所以 `Pi is 3.14.` 有 2 个句子。只有 `.`、`!` 和 `?` 结束句子，中文的 `。`、`！` 和 `？` 不算（Q26）。文件开头的字节顺序标记被忽略（Q5）。文件不存在或不是合法的 UTF-8 时，错误信息和退出码与 `wordcount FILE` 相同。`--sentences` 和别的计数选项一起用是用法错误，退出码为 2，与 `--lines --chars` 一样（Q13）。
-- **F10 Count paragraphs function（段落数函数）。** 加一个库函数 `count_paragraphs(text)`，返回一段文字（一个 Python `str`）里的段落数。一个段落是连续的若干非空行。空行是没有字符或只含空白的行，空白指 `str.isspace()` 为真的字符，与 Q1 一样（Q27）。行的结尾与 F02 一样：`\n`、`\r\n` 和 `\r` 各结束一行（Q28）。两个段落之间不论有几个空行，都只分隔一次；开头和结尾的空行不算什么。空文字，或只有空行的文字，有 0 个段落。文字开头的一个 `U+FEFF` 字节顺序标记被忽略，与 Q5 对文件的处理一样（Q29）。F10 不给 `wordcount` 加选项、信息或文件：`wordcount` 打印的内容与以前完全一样。
+- **F10 Count paragraphs function（段落数函数）。** 加一个库函数 `count_paragraphs(text)`，返回一段文字（一个 Python `str`）里的段落数。一个段落是连续的若干非空行。空行是没有字符或只含空白的行，空白指 `str.isspace()` 为真的字符，与 Q1 一样（Q27），以及看不见的字符，即 Unicode 格式字符，例如零宽空格 `U+200B`，所以看起来是空的行就是空行（Q30）。行的结尾与 F02 一样：`\n`、`\r\n` 和 `\r` 各结束一行（Q28）。两个段落之间不论有几个空行，都只分隔一次；开头和结尾的空行不算什么。空文字，或只有空行的文字，有 0 个段落。文字开头的一个 `U+FEFF` 字节顺序标记被忽略，与 Q5 对文件的处理一样（Q29）。F10 不给 `wordcount` 加选项、信息或文件：`wordcount` 打印的内容与以前完全一样。
 
 ## 5. 依赖图和顺序
 
@@ -171,6 +171,7 @@ flowchart LR
 | Q27 | 只含空格或制表符的行算空行、能分隔两个段落吗？ | 算。空行是没有字符或只含空白的行，空白按 Q1 的定义：看起来是空的行就是空行。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
 | Q28 | F10 接受哪些换行符？ | `\n`、`\r\n` 和 `\r`，与 F02 一样（Q2），所以同一段文字来自 Windows 或 Linux，计数相同。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
 | Q29 | 文字开头的字节顺序标记算不算文字？ | 不算。开头的一个 `U+FEFF` 被忽略，与文件一样（Q5），所以带标记读入的文字与不带时计数相同。 | Troy 于 2026-11-26 决定：按提议（“全按推荐”）。 |
+| Q30 | Troy 已决定只有零宽空格的行算空行，那么哪些看不见的字符让一行算空行？ | 所有 Unicode 格式字符（Cf 类），例如零宽空格 `U+200B`、零宽连接符和零宽不连接符、单词连接符 `U+2060` 以及 `U+FEFF`，再加上 Q27 的空白。它们在屏幕上都不显示。 | 待定：Troy 随这项修改决定。 |
 
 ## 10. 修改记录
 
@@ -201,3 +202,4 @@ flowchart LR
 | 8.0 | 2026-11-26 | Troy 批准。 |
 | 8.1 | 2026-11-26 | 新功能 F10，Count paragraphs function：库函数 `count_paragraphs(text)` 返回一段文字里的段落数，一个段落是连续的若干非空行。它按 Troy 的要求只硬依赖 F04，排在顺序最后（F01, F03, F04, F07, F06, F02, F05, F08, F09, F10），是新版本 v0.4 的唯一功能。它不给 `wordcount` 加选项、信息或文件。它的原型是 `docs/prototypes/F10-count-paragraphs-function.md`。第 8 节排除统计文件的段落数和 `wordcount` 里的段落。新增问题 Q27 到 Q29。F01 到 F09 不变。 |
 | 9.0 | 2026-11-26 | Troy 批准。 |
+| 9.1 | 2026-11-26 | F10 的空行也包括看不见的字符：只含空白和 Unicode 格式字符（例如零宽空格）的行算空行（Q30），这是 Troy 在 issue #103 推翻 F10 设计的抽查时的决定。F10 还没有验收，所以状态改为需要返工。它的原型加一个例子。F01 到 F09 不变。 |
