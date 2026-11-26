@@ -1,7 +1,7 @@
 ---
 troy-doc: "requirements"
 lang: "en"
-version: "8.0"
+version: "9.0"
 updated: "2026-11-26"
 status: "Approved by Troy on 2026-11-26"
 mirror: "requirements.zh-CN.md"
@@ -11,7 +11,7 @@ mirror: "requirements.zh-CN.md"
 
 ## 1. Goal
 
-troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts, and runs its `wordcount` command in PowerShell. Version 0.1 counts the words of one file. Version 0.2 adds the `wordcount` command and also counts the lines of a file. Version 0.3 adds the `--lines`, `--chars`, `--longest`, and `--sentences` options, so `wordcount` can also print the lines, the characters, or the sentences of a file, or the length of its longest word, and the `--again` option, which runs `wordcount` with the option of its last run.
+troy-mode-trial is a small Python library that counts things in UTF-8 text files. Troy calls it from Troy's own scripts, and runs its `wordcount` command in PowerShell. Version 0.1 counts the words of one file. Version 0.2 adds the `wordcount` command and also counts the lines of a file. Version 0.3 adds the `--lines`, `--chars`, `--longest`, and `--sentences` options, so `wordcount` can also print the lines, the characters, or the sentences of a file, or the length of its longest word, and the `--again` option, which runs `wordcount` with the option of its last run. Version 0.4 adds a library function that counts the paragraphs of a text; `wordcount` does not change.
 
 ## 2. Users
 
@@ -25,6 +25,8 @@ The library has functions, and one command-line program, `wordcount` (F04, with 
 2. Troy calls a counting function with the path of one UTF-8 text file.
 3. The function reads the file and returns the count as an `int`.
 4. If the file is missing or is not valid UTF-8, the function raises Python's own exception for that case.
+
+To count the paragraphs of a text (F10), Troy calls `count_paragraphs(text)` with the text itself, a Python `str`, not a file's path. It returns the number of paragraphs as an `int`. It reads no file and raises no file error.
 
 The function names in the prototypes show the flow. The Interface Designer fixes the final names and signatures in each feature's design.
 
@@ -53,6 +55,7 @@ To count a file with the option of the last run, Troy types `wordcount --again F
 | Find the longest word in PowerShell | F07 | `docs/prototypes/F07-longest-word-option.md` |
 | Run again with the last option in PowerShell | F08 | `docs/prototypes/F08-remember-the-last-options.md` |
 | Count sentences in PowerShell | F09 | `docs/prototypes/F09-count-sentences-option.md` |
+| Count the paragraphs of a text | F10 | `docs/prototypes/F10-count-paragraphs-function.md` |
 
 ## 4. Features
 
@@ -67,6 +70,7 @@ To count a file with the option of the last run, Troy types `wordcount --again F
 | F07 | Longest word option | F04 | None | v0.3 | Ran for real on Troy's PC |
 | F08 | Remember the last options | F04 | None | v0.3 | Not started |
 | F09 | Count sentences option | F04 | None | v0.3 | Not started |
+| F10 | Count paragraphs function | F04 | None | v0.4 | Not started |
 
 ### 4.1 What each feature does
 
@@ -79,10 +83,11 @@ To count a file with the option of the last run, Troy types `wordcount --again F
 - **F07 Longest word option.** Adds the `--longest` option to `wordcount`: `wordcount --longest FILE` prints the length, in characters, of the longest word of one UTF-8 text file instead of its number of words. A word is what F03 counts as a word, the whole run of characters that are not white space, so `don't,` is 6 characters long (Q15). A character is one Unicode code point, as for `--chars`, so `世界!` is 3 characters long. A file with no word, such as an empty file or a file of only `--` and `...`, prints 0. A byte order mark at the start of the file is not part of a word (Q5). A missing file, or a file that is not valid UTF-8, gives the same error message and exit code as `wordcount FILE`.
 - **F08 Remember the last options.** Adds the `--again` option to `wordcount`. Every run of `wordcount` that prints a count writes its option, or that it had none, to one settings file in the user's data folder (Q17): on Windows `%APPDATA%\wordcount\settings.json`, on Linux `$XDG_DATA_HOME/wordcount/settings.json`, or `~/.local/share/wordcount/settings.json` when `XDG_DATA_HOME` is not set. The file holds only that option, never a file's name or text (Q18). `wordcount --again FILE` counts FILE with the saved option: after `wordcount --lines a.txt`, `wordcount --again b.txt` prints the lines of `b.txt`, and after `wordcount a.txt` it prints the words. A run that fails, such as one with a missing file or a usage error, leaves the settings as they were (Q19). `--again` with no saved option, or with a settings file it cannot read, prints an error that names the settings file and exits with code 2 (Q20). `--again` together with a counting option, such as `--again --lines`, is a usage error with exit code 2 (Q21). When the settings file cannot be written, the count still prints, a warning that names the settings file goes to the error output, and the exit code is 0 (Q22).
 - **F09 Count sentences option.** Adds the `--sentences` option to `wordcount`: `wordcount --sentences FILE` prints the number of sentences in one UTF-8 text file instead of its words. A sentence is a run of text that ends in `.`, `!`, or `?`. A run of these marks, such as `...` or `?!`, ends one sentence (Q23). A sentence holds at least one letter or digit, as an F03 word does, so a file of only `-- ...` has 0 sentences (Q24). Text after the last mark is not a sentence, so `Done. Not yet` has 1 sentence (Q25). A mark ends a sentence wherever it stands, also inside a number or an abbreviation, so `Pi is 3.14.` has 2 sentences. Only `.`, `!`, and `?` end a sentence; the Chinese marks `。`, `！`, and `？` do not (Q26). A byte order mark at the start of the file is ignored (Q5). A missing file, or a file that is not valid UTF-8, gives the same error message and exit code as `wordcount FILE`. `--sentences` together with another counting option is a usage error with exit code 2, as for `--lines --chars` (Q13).
+- **F10 Count paragraphs function.** Adds the library function `count_paragraphs(text)`, which returns the number of paragraphs in a text, a Python `str`. A paragraph is a run of lines that are not blank. A blank line is empty or holds only white space, the characters for which `str.isspace()` is true, as in Q1 (Q27). Lines end as F02's lines do: `\n`, `\r\n`, and `\r` each end one line (Q28). Any number of blank lines between two paragraphs separates them once, and blank lines at the start or the end count for nothing. An empty text, or a text of only blank lines, has 0 paragraphs. One `U+FEFF` byte order mark at the start of the text is ignored, as Q5 ignores it in a file (Q29). F10 adds no `wordcount` option, no message, and no file: `wordcount` prints exactly what it printed before.
 
 ## 5. Dependency graph and order
 
-F03 changes F01's word, so F03 has a hard dependency on F01. F04 counts words as F03 counts them, so F04 has a hard dependency on F03. F02 depends on none of them. F05 adds an option to F04's command and counts lines as F02 counts them, so F05 has a hard dependency on F02 and on F04. F06 adds an option to F04's command and needs no other feature, so F06 has a hard dependency on F04 only. F07 adds an option to F04's command and finds words as F04 counts them, so F07 has a hard dependency on F04 only. F08 adds an option to F04's command that repeats the last run's option, so F08 has a hard dependency on F04 only. F09 adds an option to F04's command and needs no other feature, so F09 has a hard dependency on F04 only. F05 to F09 do not depend on each other. The new features come after the accepted ones in the order, F08 before F09, so F09's design makes `--again` remember `--sentences` too (Troy's choice on 2026-11-26).
+F03 changes F01's word, so F03 has a hard dependency on F01. F04 counts words as F03 counts them, so F04 has a hard dependency on F03. F02 depends on none of them. F05 adds an option to F04's command and counts lines as F02 counts them, so F05 has a hard dependency on F02 and on F04. F06 adds an option to F04's command and needs no other feature, so F06 has a hard dependency on F04 only. F07 adds an option to F04's command and finds words as F04 counts them, so F07 has a hard dependency on F04 only. F08 adds an option to F04's command that repeats the last run's option, so F08 has a hard dependency on F04 only. F09 adds an option to F04's command and needs no other feature, so F09 has a hard dependency on F04 only. F05 to F09 do not depend on each other. The new features come after the accepted ones in the order, F08 before F09, so F09's design makes `--again` remember `--sentences` too (Troy's choice on 2026-11-26). F10 has a hard dependency on F04 only, as Troy asked on 2026-11-26, and comes last in the order, after every feature that is accepted or under way.
 
 ```mermaid
 flowchart LR
@@ -94,9 +99,10 @@ flowchart LR
   F04 --> F07
   F04 --> F08
   F04 --> F09
+  F04 --> F10
 ```
 
-Topological order: F01, F03, F04, F07, F06, F02, F05, F08, F09
+Topological order: F01, F03, F04, F07, F06, F02, F05, F08, F09, F10
 
 ## 6. Version plan
 
@@ -105,6 +111,7 @@ Topological order: F01, F03, F04, F07, F06, F02, F05, F08, F09
 | v0.1 | F01, F03 | Troy's scripts can count the words of a UTF-8 text file, where a word holds at least one letter or digit. |
 | v0.2 | F04, F02 | Troy can count the words of a UTF-8 text file with the `wordcount` command in PowerShell, and Troy's scripts can also count the lines of a UTF-8 text file. |
 | v0.3 | F05, F06, F07, F08, F09 | Troy can count the lines of a UTF-8 text file with `wordcount --lines`, count its characters with `wordcount --chars`, find the length of its longest word with `wordcount --longest`, count its sentences with `wordcount --sentences`, and count another file with the option of the last run with `wordcount --again`, in PowerShell. |
+| v0.4 | F10 | Troy's scripts can count the paragraphs of a text with `count_paragraphs`. |
 
 ## 7. Non-functional requirements
 
@@ -125,6 +132,7 @@ None
 - Any command-line program other than `wordcount`, any `wordcount` option other than `--lines`, `--chars`, `--longest`, `--sentences`, and `--again`, two counting options in one command, printing the longest word itself, and a second file argument.
 - Keeping anything but the last run's option, such as the files of earlier runs or more than one run.
 - Telling numbers and abbreviations apart from sentence ends, and sentence marks other than `.`, `!`, and `?`.
+- Counting the paragraphs of a file, and a `wordcount` option or message for paragraphs.
 
 ## 9. Open questions
 
@@ -158,6 +166,9 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | Q24 | Must a sentence hold a letter or digit? | Yes, as an F03 word must, so marks alone, such as `-- ...`, are no sentence. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
 | Q25 | Is text after the last mark, such as `Not yet` in `Done. Not yet`, a sentence? | No, as Troy's definition says: a sentence ends in a mark. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
 | Q26 | Do the Chinese marks `。`, `！`, and `？` end a sentence? | No. Only `.`, `!`, and `?`, as Troy asked; the Chinese marks can come later as their own change. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
+| Q27 | Is a line of only spaces or tabs blank, so that it separates two paragraphs? | Yes. A blank line is empty or holds only white space, as Q1 defines white space: a line that looks empty is empty. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
+| Q28 | Which line breaks does F10 accept? | `\n`, `\r\n`, and `\r`, as F02 (Q2), so a text from Windows and the same text from Linux give the same count. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
+| Q29 | Does a byte order mark at the start of the text count as text? | No. One `U+FEFF` at the start is ignored, as in a file (Q5), so a text read with a mark gives the same count as without it. | Decided by Troy on 2026-11-26: as proposed ("全按推荐"). |
 
 ## 10. Change log
 
@@ -186,3 +197,5 @@ Troy decided these questions in advance for troy-mode's trial. Each decision is 
 | 7.1 | 2026-11-25 | F07 accepted: its status is now Ran for real on Troy's PC. |
 | 7.2 | 2026-11-26 | Two new features in v0.3 beside F05 to F07, each with a hard dependency on F04 only: F08, Remember the last options (`wordcount --again FILE` counts with the option of the last run, kept in a settings file in the user's data folder), and F09, Count sentences option (`wordcount --sentences FILE` prints the number of sentences). F04 is accepted and does not change. The order is F01, F03, F04, F07, F06, F02, F05, F08, F09. Their prototypes are `docs/prototypes/F08-remember-the-last-options.md` and `docs/prototypes/F09-count-sentences-option.md`. Section 7 lets the command write its settings file, and section 8 allows the two options. New questions Q17 to Q26. F01 to F07 do not change. |
 | 8.0 | 2026-11-26 | Approved by Troy. |
+| 8.1 | 2026-11-26 | The new feature F10, Count paragraphs function: the library function `count_paragraphs(text)` returns the number of paragraphs in a text, where a paragraph is a run of lines that are not blank. It has a hard dependency on F04 only, as Troy asked, comes last in the order (F01, F03, F04, F07, F06, F02, F05, F08, F09, F10), and is the only feature of the new version v0.4. It adds no `wordcount` option, message, or file. Its prototype is `docs/prototypes/F10-count-paragraphs-function.md`. Section 8 rules out paragraphs in files and in `wordcount`. New questions Q27 to Q29. F01 to F09 do not change. |
+| 9.0 | 2026-11-26 | Approved by Troy. |
