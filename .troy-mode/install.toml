@@ -3,12 +3,12 @@
 # nobody changed from one someone edited. Do not edit it by hand.
 
 [plugin]
-version = "0.18.0"
+version = "0.19.0"
 
 [steps]
 setup = "2026-11-07"
 lang = "2026-11-07"
-upgrade = "2026-11-25"
+upgrade = "2026-11-26"
 
 [lang]
 name = "python"
@@ -27,7 +27,7 @@ name = "python"
 ".troy-mode/checks/troycheck/attribution.py" = "9f2c10fbcb6882f49bab9333ae2162617a550136703679c36578bb82b747a359"
 ".troy-mode/checks/troycheck/classify.py" = "98e1688b6c62a5a8973711fbf0c327d35de89db41b97b1c5fbad54fb971ddde3"
 ".troy-mode/checks/troycheck/cli.py" = "77b0a77f33785e9cbe078a42a130742506cd4bdcfc13d2f28692d4551c8a5074"
-".troy-mode/checks/troycheck/config.py" = "098f291cfb1668d4b9b47a55f74823e3fe00ffaaa89500be55f1a65c92274a53"
+".troy-mode/checks/troycheck/config.py" = "1cc1c33e9a2aab1ee2576e6caeaf8274f4215e2b833b7752fd97f3a933cf7e32"
 ".troy-mode/checks/troycheck/context.py" = "1e5e27a15d866c9b1f9382b5512abc5fee01967ea31666b8845d62d6404ec89f"
 ".troy-mode/checks/troycheck/covreport.py" = "1d9640d7a64d080ff828b25c8c480f33039a0351495337646ef35954b977641b"
 ".troy-mode/checks/troycheck/cppadapter.py" = "bddc5f06eec12c8e957f50f8cb921df8a806efd4d7aa4a4903ce0dcc7f044669"
